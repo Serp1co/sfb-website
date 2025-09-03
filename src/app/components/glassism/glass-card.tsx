@@ -5,7 +5,7 @@ export const GlassCard: React.FC<GlassProps & {
   description?: string;
 }> = ({ title, description, children, ...props }) => {
   return (
-    <GlassPanel 
+    <GlassPanel
       {...props}
       style={{
         ...props.style,
@@ -13,6 +13,12 @@ export const GlassCard: React.FC<GlassProps & {
       }}
     >
       <div style={{
+        display: 'flex',             // flex container
+        flexDirection: 'column',     // disposizione verticale
+        justifyContent: 'center',    // centra verticalmente
+        alignItems: 'center',        // centra orizzontalmente
+        width: '100%',               // occupa tutta la card
+        height: '100%',              // occupa tutta la card
         color: 'white',
         textAlign: 'center',
       }}>

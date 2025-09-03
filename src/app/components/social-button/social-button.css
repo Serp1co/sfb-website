@@ -1,0 +1,19 @@
+.social-button {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  text-decoration: none;
+}
+
+.social-button-list {
+  display: flex;
+  gap: 20px;
+}
+
+.social-button:hover {
+  color: #4488ff;
+}
+

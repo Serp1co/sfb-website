@@ -1,0 +1,58 @@
+.services-glass-card {
+    max-width: 380px;
+    min-width: 300px;
+    border-radius: 24px;
+    transition: transform 0.3s ease, border-color 0.3 ease;
+}
+
+.services-glass-container {
+    text-align: center;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.services-icon {
+    font-size: 64px;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.services-image {
+    opacity: 0.7;
+    border-radius: 24px;
+    border: 1px solid rgb(255, 255, 255, 0.1);
+    transition: border-color 0.3s ease;
+}
+
+.services-title {
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: white;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 1);
+}
+
+.services-description {
+    text-align: center;
+    font-size: 16px;
+    line-height: 1.7;
+    margin-bottom: 60px;
+    color: rgba(255, 255, 255, 1);
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 1);
+}
+
+.service-section-list {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.services-glass-container .glass-button-wrapper {
+    width: 140px;
+    margin: 0 auto;
+}
