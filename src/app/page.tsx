@@ -279,9 +279,7 @@ export default function Home(): JSX.Element {
               >
                 Get in Touch
               </GlassButton>
-
             </div>
-
           </div>
         </section>
 
@@ -293,7 +291,7 @@ export default function Home(): JSX.Element {
 
           <section id="about">
             <div>
-              <div>
+              <div className="about-header">
                 <h2 className="about-us">
                   About Us
                 </h2>
