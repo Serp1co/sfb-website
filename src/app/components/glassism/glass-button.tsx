@@ -1,4 +1,5 @@
 import GlassPanel, { GlassProps } from "./glass-panel";
+import React from "react";
 
 export const GlassButton: React.FC<GlassProps & {
   variant?: 'primary' | 'secondary' | 'ghost';

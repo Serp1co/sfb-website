@@ -52,6 +52,16 @@
   margin: 0 auto;
 }
 
+.services-grid {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
 .services-glass-container .glass-button-wrapper {
     width: 140px;
     margin: 0 auto;

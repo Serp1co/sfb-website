@@ -8,11 +8,16 @@
 
 .header-glass-panel {
     padding-left: 2.5em !important;
+    overflow: visible !important;
     
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
+}
+
+.header-glass-panel > div {
+    overflow: visible !important;
 }
 
 .logo {
@@ -53,6 +58,104 @@
 .desktop-nav-button.active {
     color: #4488ff;
     font-weight: 600;
+}
+
+
+/* -- Services dropdown --------------------------------------------- */
+
+.nav-item-with-dropdown {
+    position: relative;
+}
+
+.nav-dropdown-arrow {
+    margin-left: 4px;
+    font-size: 12px;
+    opacity: 0.7;
+    transition: transform 0.2s ease;
+    display: inline-block;
+}
+
+.nav-item-with-dropdown:hover .nav-dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+.services-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding-top: 10px;
+    z-index: 1001;
+    min-width: 180px;
+}
+
+.services-dropdown-panel {
+    width: 100%;
+}
+
+.services-dropdown-panel > div:last-child {
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 8px !important;
+    width: 100% !important;
+}
+
+.services-dropdown-list {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.services-dropdown-item {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 15px;
+    padding: 10px 16px;
+    cursor: pointer;
+    text-align: left;
+    border-radius: 10px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    white-space: nowrap;
+}
+
+.services-dropdown-item:hover {
+    background: rgba(68, 136, 255, 0.15);
+    color: white;
+}
+
+.services-dropdown-item.active {
+    color: #4488ff;
+    font-weight: 600;
+}
+
+/* -- Mobile services sublist --------------------------------------- */
+
+.mobile-services-group {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.mobile-services-sublist {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 10px;
+}
+
+.mobile-service-subitem {
+    font-size: 15px !important;
+    opacity: 0.8;
+    padding-left: 24px !important;
+}
+
+.mobile-service-subitem.active {
+    color: #4488ff;
+    font-weight: 600;
+    opacity: 1;
 }
 
 .mobile-nav-button {

@@ -9,9 +9,10 @@ export interface ServiceSectionProps {
   title: string;
   description: string[];
   icon: string;
+  onLearnMore?: () => void;
 }
 
-const ServiceSection: React.FC<ServiceSectionProps> = ({ icon, title, description }) => (
+const ServiceSection: React.FC<ServiceSectionProps> = ({ icon, title, description, onLearnMore }) => (
   <GlassCard
     height={380}
     blur={20}
@@ -46,7 +47,7 @@ const ServiceSection: React.FC<ServiceSectionProps> = ({ icon, title, descriptio
         </p>
       ))}
       <div className="glass-button-wrapper">
-        <GlassButton variant="primary">
+        <GlassButton variant="primary" onClick={onLearnMore}>
           Learn More
         </GlassButton>
       </div>

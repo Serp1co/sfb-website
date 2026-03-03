@@ -1,0 +1,209 @@
+/* ------------------------------------------------------------------ */
+/*  Service Detail Page                                               */
+/* ------------------------------------------------------------------ */
+
+.service-detail-wrapper {
+  position: relative;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* -- Hero area ----------------------------------------------------- */
+
+.service-hero {
+  position: relative;
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 160px 20px 80px;
+  text-align: center;
+}
+
+.service-hero-icon {
+  position: relative;
+  margin-bottom: 32px;
+}
+
+.service-hero-image {
+  opacity: 0.75;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.service-hero h1 {
+  font-size: clamp(36px, 5vw, 64px);
+  font-weight: bold;
+  color: white;
+  margin-bottom: 16px;
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 1);
+  line-height: 1.1;
+}
+
+.service-hero-subtitle {
+  font-size: clamp(18px, 2.5vw, 24px);
+  color: rgba(255, 255, 255, 0.8);
+  text-shadow: 0 3px 16px rgba(0, 0, 0, 1);
+  max-width: 700px;
+  margin: 0 auto 40px;
+}
+
+.service-hero-description {
+  font-size: 17px;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8);
+  max-width: 780px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* -- Features grid ------------------------------------------------- */
+
+.service-features-section {
+  padding: 40px 20px 100px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.service-features-heading {
+  text-align: center;
+  font-size: clamp(28px, 3.5vw, 42px);
+  font-weight: bold;
+  color: white;
+  margin-bottom: 60px;
+  text-shadow: 0 3px 16px rgba(0, 0, 0, 1);
+}
+
+.service-features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 28px;
+}
+
+.service-feature-card {
+  border-radius: 24px;
+  min-height: 260px;
+  transition: transform 0.3s ease;
+}
+
+.service-feature-card:hover {
+  transform: translateY(-4px);
+}
+
+.service-feature-content {
+  padding: 32px 28px;
+}
+
+.service-feature-content h3 {
+  font-size: 22px;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 16px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+}
+
+.service-feature-content p {
+  font-size: 15px;
+  line-height: 1.75;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+}
+
+/* -- Technology tags ----------------------------------------------- */
+
+.service-tech-section {
+  padding: 0 20px 120px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.service-tech-heading {
+  text-align: center;
+  font-size: clamp(24px, 3vw, 36px);
+  font-weight: bold;
+  color: white;
+  margin-bottom: 40px;
+  text-shadow: 0 3px 16px rgba(0, 0, 0, 1);
+}
+
+.service-tech-tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+}
+
+.service-tech-tag {
+  border-radius: 50px;
+  transition: transform 0.2s ease;
+}
+
+.service-tech-tag:hover {
+  transform: scale(1.06);
+}
+
+.service-tech-tag-label {
+  font-size: 15px;
+  font-weight: 600;
+  color: white;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+
+/* -- CTA ---------------------------------------------------------- */
+
+.service-cta-section {
+  padding: 0 20px 160px;
+  text-align: center;
+}
+
+.service-cta-panel {
+  max-width: 700px;
+  margin: 0 auto;
+  border-radius: 24px;
+}
+
+.service-cta-inner {
+  padding: 48px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.service-cta-inner h3 {
+  font-size: 28px;
+  font-weight: bold;
+  color: white;
+  margin-bottom: 16px;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+}
+
+.service-cta-inner p {
+  font-size: 17px;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 32px;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
+}
+
+.service-cta-button {
+  width: 200px;
+}
+
+/* -- Responsive ---------------------------------------------------- */
+
+@media (max-width: 768px) {
+  .service-hero {
+    padding: 140px 16px 60px;
+  }
+
+  .service-features-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .service-cta-inner {
+    padding: 32px 20px;
+  }
+}
