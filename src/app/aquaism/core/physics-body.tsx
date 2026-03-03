@@ -2,7 +2,7 @@
 
 import { useFrame } from "@react-three/fiber";
 import { RapierRigidBody, RigidBody, BallCollider } from "@react-three/rapier";
-import { useRef } from "react";
+import React, { useRef } from "react";
 import * as THREE from "three";
 
 const META_OFFSET = new THREE.Vector3(0.5, 0.5, 0.5);

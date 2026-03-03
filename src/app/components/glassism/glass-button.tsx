@@ -35,6 +35,8 @@ export const GlassButton: React.FC<GlassProps & {
         fontWeight: '600',
         textShadow: '0 1px 3px rgba(0,0,0,0.3)',
         letterSpacing: '0.5px',
+        textAlign: 'center',
+        width: '100%',
       }}>
         {children}
       </span>

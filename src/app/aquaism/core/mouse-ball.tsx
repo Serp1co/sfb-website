@@ -2,7 +2,7 @@
 
 import { useThree, useFrame } from "@react-three/fiber";
 import { RapierRigidBody, RigidBody, BallCollider } from "@react-three/rapier";
-import { useRef, useState, useMemo } from "react";
+import React, { useRef, useState, useMemo } from "react";
 import * as THREE from "three";
 
 const MouseBall: React.FC = () => {

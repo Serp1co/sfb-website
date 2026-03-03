@@ -11,6 +11,12 @@ import { GlassCard } from "./components/glassism/glass-card";
 import GlassPanel from "./components/glassism/glass-panel";
 import { AdvancedFakeReflectionSetup } from "./aquaism/backgrounds/reflective-background";
 import Image from "next/image";
+import { forwardEventToCanvas } from "./utils/forward-event-to-canvas";
+import SocialButtonList from "./components/social-button/social-button-list";
+import "@/app/page.css"
+import ContactSectionList from "./components/contact-section/contact-section-list";
+import ServiceSectionList from "./components/services-section/services-section-list";
+import StatsSectionList from "./components/stats-section/stats-section-list";
 
 export default function Home(): JSX.Element {
   const canvasContainerRef = useRef<HTMLDivElement>(null);
@@ -19,84 +25,12 @@ export default function Home(): JSX.Element {
   const [isMobile, setIsMobile] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Social Button Component
-  const SocialButton: React.FC<{ name: string, link: string }> = ({ name, link }) => {
-    const [isHovered, setIsHovered] = useState(false);
-
-    return (
-      <button
-        style={{
-          background: 'none',
-          border: 'none',
-          color: isHovered ? '#4488ff' : 'rgba(255,255,255,0.7)',
-          fontSize: '14px',
-          cursor: 'pointer',
-          transition: 'color 0.3s ease',
-        }}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        onClick={() => window.location.href = link}
-      >
-        {name}
-      </button>
-    );
-  };
-
   useEffect(() => {
     const overlay: HTMLDivElement | null = overlayRef.current;
     const canvasContainer: HTMLDivElement | null = canvasContainerRef.current;
     if (!overlay || !canvasContainer) return;
 
-    // Function to forward events to canvas
-    const forwardEventToCanvas = (originalEvent: MouseEvent | WheelEvent | PointerEvent): void => {
-      const canvas: HTMLCanvasElement | null = canvasContainer.querySelector('canvas');
-      if (!canvas) return;
-
-      const eventInit: MouseEventInit = {
-        bubbles: true,
-        cancelable: true,
-        clientX: (originalEvent as MouseEvent).clientX,
-        clientY: (originalEvent as MouseEvent).clientY,
-        screenX: (originalEvent as MouseEvent).screenX,
-        screenY: (originalEvent as MouseEvent).screenY,
-        ctrlKey: originalEvent.ctrlKey,
-        shiftKey: originalEvent.shiftKey,
-        altKey: originalEvent.altKey,
-        metaKey: originalEvent.metaKey,
-        button: (originalEvent as MouseEvent).button,
-        buttons: (originalEvent as MouseEvent).buttons,
-        relatedTarget: (originalEvent as MouseEvent).relatedTarget,
-        view: window
-      };
-
-      if (originalEvent.type.includes('wheel')) {
-        const wheelOriginal = originalEvent as WheelEvent;
-        const wheelEvent: WheelEvent = new WheelEvent(originalEvent.type, {
-          ...eventInit,
-          deltaX: wheelOriginal.deltaX,
-          deltaY: wheelOriginal.deltaY,
-          deltaZ: wheelOriginal.deltaZ,
-          deltaMode: wheelOriginal.deltaMode
-        });
-        canvas.dispatchEvent(wheelEvent);
-      } else if (originalEvent.type.includes('mouse')) {
-        const mouseEvent: MouseEvent = new MouseEvent(originalEvent.type, eventInit);
-        canvas.dispatchEvent(mouseEvent);
-      } else if (originalEvent.type.includes('pointer')) {
-        const pointerOriginal = originalEvent as PointerEvent;
-        const pointerEvent: PointerEvent = new PointerEvent(originalEvent.type, {
-          ...eventInit,
-          pointerId: pointerOriginal.pointerId,
-          pointerType: pointerOriginal.pointerType,
-          width: pointerOriginal.width,
-          height: pointerOriginal.height,
-          pressure: pointerOriginal.pressure,
-          tiltX: pointerOriginal.tiltX,
-          tiltY: pointerOriginal.tiltY
-        });
-        canvas.dispatchEvent(pointerEvent);
-      }
-    };
+    // Function to forward events to canvas    
 
     const eventsToForward: readonly string[] = [
       'mousedown', 'mouseup', 'mousemove', 'mouseenter', 'mouseleave',
@@ -107,7 +41,8 @@ export default function Home(): JSX.Element {
     const handlers: Record<string, (e: Event) => void> = {};
     eventsToForward.forEach((eventType: string) => {
       handlers[eventType] = (e: Event): void => {
-        forwardEventToCanvas(e as MouseEvent | WheelEvent | PointerEvent);
+        const canvas = canvasContainer.querySelector('canvas');
+        forwardEventToCanvas(e as MouseEvent | WheelEvent | PointerEvent, canvas);
       };
       overlay.addEventListener(eventType, handlers[eventType], { capture: true });
     });
@@ -183,7 +118,8 @@ export default function Home(): JSX.Element {
         section {
           width: 100%;
         }
-      `}</style>
+      `}
+      </style>
 
       {/* Canvas Background - Fixed Position */}
       <div ref={canvasContainerRef} className="fixed inset-0 w-full h-full" style={{ zIndex: 0 }}>
@@ -213,36 +149,20 @@ export default function Home(): JSX.Element {
       {/* Content Overlay */}
       <div ref={overlayRef} className="relative" style={{ zIndex: 1 }}>
         {/* Header/Navigation */}
-        <header style={{
-          position: 'fixed',
-          top: -15,
-          left: -5,
-          right: -5,
-          zIndex: 1000,
-        }}>
+        <header className="header-navigation">
           <GlassPanel
+            className="header-glass-panel"
+            style={{ paddingLeft: '2.5em' }}
             width={'100%'}
             height={'100%'}
             blur={25}
             glassColor="rgba(255, 255, 255, 0.03)"
-            style={{
-              paddingLeft: '2.5em',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              width: '100%',
-            }}>
+          >
 
             {/* Logo - Left aligned */}
             <div
+              className="logo"
               onClick={() => scrollToSection('hero')}
-              style={{
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                height: '100%',
-                marginTop: '10px',
-              }}
             >
               <Image
                 src="/sfbs-logo.png"
@@ -253,65 +173,37 @@ export default function Home(): JSX.Element {
             </div>
 
             {/* Navigation */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              marginLeft: '2.5em',
-              gap: '30px',
-              height: '100%',
-              marginTop: '10px',
-            }}>
+            <div id="navigation">
               {/* Desktop Navigation */}
-              <nav style={{
-                display: isMobile ? 'none' : 'flex',
-                gap: '30px',
-                alignItems: 'center',
-                height: '100%',
-              }}>
+              <nav className={`desktop-nav ${isMobile ? 'hidden' : ''}`}>
                 {['Home', 'About', 'Services', 'Partners', 'Contact'].map((item) => (
                   <button
+                    className={`desktop-nav-button 
+                      ${activeSection === (item.toLowerCase() === 'home' ? 'hero' : item.toLowerCase())
+                        ? 'active'
+                        : ''
+                      }`}
                     key={item}
-                    onClick={() => scrollToSection(item.toLowerCase() === 'home' ? 'hero' : item.toLowerCase())}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      color: activeSection === (item.toLowerCase() === 'home' ? 'hero' : item.toLowerCase()) ? '#4488ff' : 'white',
-                      fontSize: '16px',
-                      cursor: 'pointer',
-                      transition: 'color 0.3s ease',
-                      fontWeight: activeSection === (item.toLowerCase() === 'home' ? 'hero' : item.toLowerCase()) ? '600' : '400',
-                      padding: '10px 0',
-                    }}
+                    onClick={() =>
+                      scrollToSection(item.toLowerCase() === 'home' ? 'hero' : item.toLowerCase())
+                    }
                   >
                     {item}
                   </button>
+
                 ))}
               </nav>
 
               {/* Mobile Menu Toggle */}
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                style={{
-                  display: isMobile ? 'block' : 'none',
-                  background: 'none',
-                  border: 'none',
-                  fontSize: '24px',
-                  cursor: 'pointer',
-                  padding: '10px',
-                  marginTop: '10px',
-                  color: mobileMenuOpen ? '#4488ff' : 'white',
-                  transition: 'color 0.3s ease',
-                }}
+                className={`mobile-nav-button ${isMobile ? 'visible' : ''} ${mobileMenuOpen ? 'active' : ''}`}
               >
                 ☰
               </button>
             </div>
             {!mobileMenuOpen && !isMobile && (
-              <div style={{
-                paddingRight: '20px',
-                marginRight: '20px',
-                marginTop: '10px',
-              }}>
+              <div className="work-with-us-wrapper">
                 <GlassButton
                   variant="secondary"
                   width={200}
@@ -325,31 +217,15 @@ export default function Home(): JSX.Element {
 
           {/* Mobile Menu Dropdown */}
           {mobileMenuOpen && isMobile && (
-            <div style={{
-              display: 'flex',
-              justifyContent: 'right',
-              marginRight: '10px',
-            }}>
-              <GlassPanel style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                }}>
+            <div className="mobile-menu-wrapper">
+              <GlassPanel className="mobile-menu-panel" style={{ flexDirection: 'column' }}>
                 {['Home', 'About', 'Services', 'Partners', 'Contact'].map((item) => (
                   <button
+                    className="mobile-menu-button"
                     key={item}
-                    onClick={() => scrollToSection(item.toLowerCase() === 'home' ? 'hero' : item.toLowerCase())}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      color: 'white',
-                      fontSize: '18px',
-                      cursor: 'pointer',
-                      padding: '10px',
-                      textAlign: 'center',
-                    }}
-
+                    onClick={() =>
+                      scrollToSection(item.toLowerCase() === 'home' ? 'hero' : item.toLowerCase())
+                    }
                   >
                     {item}
                   </button>
@@ -357,7 +233,9 @@ export default function Home(): JSX.Element {
                 <GlassButton
                   variant="secondary"
                   width={200}
-                  onClick={() => window.location.href = 'mailto:amministrazione@sfbs.it'}
+                  onClick={() =>
+                    window.location.href = 'mailto:amministrazione@sfbs.it'
+                  }
                 >
                   Work with us
                 </GlassButton>
@@ -367,70 +245,27 @@ export default function Home(): JSX.Element {
         </header>
 
         {/* Hero Section */}
-        <section id="hero" style={{
-          minHeight: '100vh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          position: 'relative',
-          padding: '120px 20px 80px',
-        }}>
-          <div className="animate-in" style={{
-            textAlign: 'center',
-            maxWidth: '900px',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginBottom: '40px',
-          }}>
+        <section id="hero">
+          <div className="animate-in">
             <Image
               src="/sfbs-logo.png"
               alt="SFB"
               height={300}
               width={300}
-              style={{
-                height: '180px',
-                width: 'auto',
-                filter: 'drop-shadow(0 4px 20px rgba(0, 0, 0, 1))',
-                paddingBottom: '40px',
-                paddingTop: '20px',
-              }}
-            />
-            <h1 style={{
-              fontSize: 'clamp(36px, 6vw, 72px)',
-              fontWeight: 'bold',
-              marginBottom: '20px',
-              color: 'white',
-              textShadow: '0 4px 20px rgba(0, 0, 0, 1)',
-              lineHeight: 1.1,
-            }}>
+              className="hero-logo" />
+            <h1>
               STRIVE FOR BETTER
             </h1>
-            <p style={{
-              fontSize: 'clamp(18px, 2.5vw, 28px)',
-              color: 'rgba(255,255,255,0.8)',
-              marginBottom: '40px',
-              textShadow: '0 4px 20px rgba(0, 0, 0, 1)',
-            }}>
+            <p>
               Infrastructure. Development. Security.
             </p>
-            <div style={{
-              display: 'flex',
-              gap: '20px',
-              justifyContent: 'center',
-              flexWrap: 'wrap',
-              paddingBottom: '20px',
-            }}>
+            <div className="glass-container">
               <GlassButton
                 variant="primary"
                 blur={30}
                 width={180}
                 onClick={() => scrollToSection('services')}
-                style={{
-                  textShadow: '0 4px 20px rgba(0, 0, 0, 1)'
-                }}
-              >
+                className="hero-button">
                 Our Services
               </GlassButton>
               <GlassButton
@@ -441,9 +276,7 @@ export default function Home(): JSX.Element {
               >
                 Get in Touch
               </GlassButton>
-
             </div>
-
           </div>
         </section>
 
@@ -451,64 +284,28 @@ export default function Home(): JSX.Element {
         <GlassPanel blur={10}
           glassColor="rgba(0, 0, 0, 0)"
           borderRadius={0}
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            height: 'fit-content',
-            flexDirection: 'column',
-            marginLeft: '-10px',
-            marginRight: '-10px',
-          }}
-        >
-          <section id="about" style={{
-            padding: '100px 20px',
-            position: 'relative',
-          }}>
-            <div style={{
-              maxWidth: '1200px',
-              margin: '0 auto',
-            }}>
-              <div style={{
-                textAlign: 'center',
-                marginBottom: '60px',
-              }}>
-                <h2 style={{
-                  fontSize: 'clamp(32px, 4vw, 48px)',
-                  fontWeight: 'bold',
-                  color: 'white',
-                  marginBottom: '20px',
-                  textShadow: '0 4px 20px rgba(0, 0, 0, 1)'
-                }}>
+          className="about-section-panel">
+
+          <section id="about">
+            <div>
+              <div className="about-header">
+                <h2 className="about-us">
                   About Us
                 </h2>
-                <p style={{
-                  fontSize: '20px',
-                  color: 'rgba(255, 255, 255, 0.8)',
-                  maxWidth: '800px',
-                  margin: '0 auto',
-                  textShadow: '0 4px 20px rgba(0, 0, 0, 1)'
-                }}>
+                <p className="about-description">
                   Empowering Businesses Through Innovative IT Solutions
                 </p>
               </div>
 
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-around',
-                alignItems: 'center',
-                flexWrap: 'wrap',
-                marginBottom: '60px',
-                gap: '20px',
-              }}>
+              <div className="about-container" >
                 <GlassPanel
                   height={400}
                   blur={20}
-                  style={{ width: '100%', maxWidth: '580px', minHeight: '380px' }}
+                  className="about-container-panel"
                 >
-                  <div style={{ textAlign: 'center', padding: '20px' }}>
-                    <h3 style={{ fontSize: '24px', marginBottom: '20px', textShadow: '0 4px 20px rgba(0, 0, 0, 1)', color: 'white' }}>Our Mission</h3>
-                    <p style={{ fontSize: '16px', lineHeight: 1.8, textShadow: '0 4px 20px rgba(0, 0, 0, 1)', color: 'rgba(255, 255, 255, 1)', textAlign: 'left' }}>
+                  <div className="mission-container">
+                    <h3>Our Mission</h3>
+                    <p>
                       At SFB, we are dedicated to helping organizations transform and thrive in today&apos;s
                       fast-paced digital landscape. We&apos;ve brought together a team of seasoned technology
                       professionals who share a passion for open-source collaboration and a commitment to
@@ -520,21 +317,21 @@ export default function Home(): JSX.Element {
                 <GlassCard
                   height={400}
                   blur={20}
-                  style={{ width: '100%', maxWidth: '580px', minHeight: '380px' }}
+                  className="approach-container-panel"
                 >
-                  <div style={{ textAlign: 'center', padding: '20px' }}>
-                    <h3 style={{ fontSize: '24px', marginBottom: '20px', textShadow: '0 4px 20px rgba(0, 0, 0, 1)', color: 'white' }}>Our Approach</h3>
-                    <ul style={{ listStyle: 'none', padding: 0, textAlign: 'left' }}>
-                      <li style={{ marginBottom: '15px', fontSize: '16px', lineHeight: 1.6, textShadow: '0 4px 20px rgba(0, 0, 0, 1)', color: 'rgba(255,255,255,1)' }}>
+                  <div className="approach-container">
+                    <h3>Our Approach</h3>
+                    <ul>
+                      <li>
                         ✓ Leverage open-source technologies for robust solutions
                       </li>
-                      <li style={{ marginBottom: '15px', fontSize: '16px', lineHeight: 1.6, textShadow: '0 4px 20px rgba(0, 0, 0, 1)', color: 'rgba(255,255,255,1)' }}>
+                      <li>
                         ✓ Partner closely with clients for custom strategies
                       </li>
-                      <li style={{ marginBottom: '15px', fontSize: '16px', lineHeight: 1.6, textShadow: '0 4px 20px rgba(0, 0, 0, 1)', color: 'rgba(255,255,255,1)' }}>
+                      <li>
                         ✓ Foster continuous learning and community sharing
                       </li>
-                      <li style={{ fontSize: '16px', lineHeight: 1.6, textShadow: '0 4px 20px rgba(0, 0, 0, 1)', color: 'rgba(255,255,255,1)' }}>
+                      <li>
                         ✓ Drive measurable growth through innovation
                       </li>
                     </ul>
@@ -543,186 +340,70 @@ export default function Home(): JSX.Element {
               </div>
 
               {/* Stats */}
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-around',
-                alignItems: 'center',
-                flexWrap: 'wrap',
-                gap: '20px',
-              }}>
-                {[
-                  { number: '50+', label: 'Certifications' },
-                  { number: '42', label: 'Projects' },
-                  { number: '16', label: 'Partnerships' },
-                  { number: '100%', label: 'Client Satisfaction' },
-                ].map((stat, index) => (
-                  <GlassCard
-                    key={index}
-                    height={150}
-                    blur={15}
-                    glassColor="rgba(68,136,255,0.05)"
-                    style={{
-                      minWidth: '280px',
-                    }}
-                  >
-                    <div style={{ textAlign: 'center' }}>
-                      <div style={{
-                        fontSize: '42px',
-                        fontWeight: 'bold',
-                        color: '#4488ff',
-                        marginBottom: '10px',
-                        textShadow: '0 2px 10px rgba(0, 0, 0, 1)',
-                      }}>
-                        {stat.number}
-                      </div>
-                      <div style={{
-                        fontSize: '16px',
-                        color: 'rgba(255,255,255,0.8)',
-                        textTransform: 'uppercase',
-                        letterSpacing: '1px',
-                        textShadow: '0 4px 20px rgba(0, 0, 0, 1)'
-                      }}>
-                        {stat.label}
-                      </div>
-                    </div>
-                  </GlassCard>
-                ))}
+              <div className="stats-section">
+                <StatsSectionList
+                  stats={[
+                    { number: '50+', label: 'Certifications' },
+                    { number: '42', label: 'Projects' },
+                    { number: '16', label: 'Partnerships' },
+                    { number: '100%', label: 'Client Satisfaction' },
+                  ]}
+                />
               </div>
             </div>
           </section>
 
           {/* Services Section */}
-          <section id="services" style={{
-            padding: '100px 20px',
-            width: '100%',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-            <div style={{
-              margin: '0 auto',
-            }}>
-              <div style={{
-                textAlign: 'center',
-                marginBottom: '60px',
-              }}>
-                <h2 style={{
-                  fontSize: 'clamp(32px, 4vw, 48px)',
-                  fontWeight: 'bold',
-                  color: 'white',
-                  marginBottom: '20px',
-                  textShadow: '0 3px 15px rgba(0, 0, 0, 1)',
-                }}>
+          <section id="services">
+            <div className="services-container">
+              <div className="services-description">
+                <h2>
                   Our Services
                 </h2>
-                <p style={{
-                  fontSize: '20px',
-                  color: 'rgba(255, 255, 255, 0.8)',
-                  textShadow: '0 4px 20px rgba(0, 0, 0, 1)'
-                }}>
+                <p>
                   Comprehensive IT solutions tailored to your needs
                 </p>
               </div>
 
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-around',
-                alignItems: 'center',
-                flexWrap: 'wrap',
-                gap: '20px',
-              }}>
-                {[
+              <ServiceSectionList
+                services={[
                   {
-                    title: 'Infrastructure',
-                    description: 'Solid expertise in managing and orchestrating your infrastructures with cloud-native solutions.',
-                    icon: 'services-1.jpg',
+                    title: "Infrastructure",
+                    description: [
+                      "Solid expertise in managing and orchestrating your infrastructures with cloud-native solutions.",
+                    ],
+                    icon: "services-1.jpg",
                   },
                   {
-                    title: 'Development',
-                    description: 'Performant, distributed, robust and maintainable applications built with modern technologies.',
-                    icon: 'services-2.jpg',
+                    title: "Development",
+                    description: [
+                      "Performant, distributed, robust and maintainable applications built with modern technologies.",
+                    ],
+                    icon: "services-2.jpg",
                   },
                   {
-                    title: 'Security',
-                    description: 'Full degree security consultancy, from system architecture to application security.',
-                    icon: 'services-3.jpg',
+                    title: "Security",
+                    description: [
+                      "Full degree security consultancy, from system architecture to application security.",
+                    ],
+                    icon: "services-3.jpg",
                   },
-                ].map((service, index) => (
-                  <div key={index} style={{
-                    maxWidth: '380px', // Set a fixed width for each item
-                    minWidth: '320px', // Ensure items don't shrink too small
-                  }}>
-                    <GlassCard
-                      height={380}
-                      blur={20}
-                    >
-                      <div style={{ textAlign: 'center', padding: '20px' }}>
-                        <div style={{ fontSize: '64px', marginBottom: '10px' }}>
-                          <GlassPanel style={{ padding: '0' }}>
-                            <GlassPanel
-                              style={{ padding: '0', position: 'absolute', width: '100%', height: '100%' }}
-                              blur={0.4}
-                              glassColor="rgba(0, 6, 92, 0.25)"
-                            />
-                            <Image
-                              src={service.icon}
-                              alt={service.title}
-                              width={300}
-                              height={300}
-                              style={{
-                                opacity: '0.7', borderRadius: '24px', inset: '0px',
-                                border: `1px solid rgba(255,255,255,0.1)`,
-                                transition: 'border-color 0.3s ease',
-                              }} />
-                          </GlassPanel>
-                        </div>
-                        <h3 style={{ fontSize: '28px', marginBottom: '20px', color: 'white', zIndex: '10' }}>
-                          {service.title}
-                        </h3>
-                        <p style={{ fontSize: '16px', lineHeight: 1.7, marginBottom: '30px', textShadow: '0 4px 20px rgba(0, 0, 0, 1)', color: 'rgba(255,255,255,1)' }}>
-                          {service.description}
-                        </p>
-                        <GlassButton
-                          variant="primary"
-                          blur={100}
-                          width={140}
-                          glassColor="rgba(0, 16, 156, 0.1)"
-                        >
-                          Learn More
-                        </GlassButton>
-                      </div>
-                    </GlassCard>
-                  </div>
-                ))}
-              </div>
+                ]}
+              />
             </div>
           </section>
 
           {/* Partners Section */}
-          <section id="partners" style={{
-            padding: '100px 20px',
-          }}>
+          <section id="partners">
             <div style={{
               maxWidth: '1200px',
               margin: '0 auto',
             }}>
-              <div style={{
-                textAlign: 'center',
-                marginBottom: '60px',
-              }}>
-                <h2 style={{
-                  fontSize: 'clamp(32px, 4vw, 48px)',
-                  fontWeight: 'bold',
-                  color: 'white',
-                  marginBottom: '20px',
-                  textShadow: '0 4px 20px rgba(0, 0, 0, 1)',
-                }}>
+              <div className="partners-container">
+                <h2>
                   Our Partners
                 </h2>
-                <p style={{
-                  fontSize: '20px',
-                  textShadow: '0 4px 20px rgba(0, 0, 0, 1)',
-                  color: 'rgba(255,255,255,0.8)',
-                }}>
+                <p>
                   Trusted by industry leaders
                 </p>
               </div>
@@ -736,90 +417,67 @@ export default function Home(): JSX.Element {
                   background: 'rgba(255, 174, 0, 0.06)',
                 }}
               >
-                <div style={{
-                  display: 'flex',
-                  justifyContent: 'space-around',
-                  alignItems: 'center',
-                  flexWrap: 'wrap',
-                  gap: '40px',
-                  width: '100%',
-                }}>
-                  {[{ name: 'RedHat', icon: "partners/redhat.png" }, { name: 'VMware', icon: "partners/vmware.png" }, { name: 'Engineering', icon: "partners/engineering.png" }].map((partner, index) => (
-                    <div key={index} style={{
-                      fontSize: '24px',
-                      fontWeight: 'bold',
-                      color: 'rgba(255,255,255,0.8)',
-                      textShadow: '0 2px 10px rgba(0, 0, 0, 1)',
-                      display: 'flex',
-                      alignContent: 'center',
-                      justifyContent: 'center',
-                      flexDirection: 'column',
-                      textAlign: 'center',
-                    }}>
+                <div className="partners-list">
+                  {[{ name: 'RedHat', icon: "partners/redhat.png" }, { name: 'VMware', icon: "partners/vmware.png" }].map((partner, index) => (
+                    <div key={index} className="partners-listed">
                       <Image
                         src={partner.icon}
                         alt={partner.name}
                         width={150}
                         height={150}
-                        style={{
-                          margin: '30px',
-                          filter: 'drop-shadow(0 2px 10px rgba(0, 0, 0, 1))',
-                        }} />
+                        className="partners-images"
+                      />
                       <p style={{ width: '100%' }}>{partner.name}</p>
                     </div>
                   ))}
                 </div>
               </GlassPanel>
-            </div>
-          </section>
+            <div className="partners-container">
+                        <h2>
+                            Our Customers
+                        </h2>
+                        <p>
+                            Trusted by industry leaders
+                        </p>
+                    </div>
+
+                    <GlassPanel
+                        width="100%"
+                        height={200}
+                        blur={40}
+                        glassColor='rgba(204, 204, 204, 0.1)'
+                        style={{
+                            background: 'rgba(204, 204, 204, 0.06)',
+                        }}
+                    >
+                        <div className="partners-list">
+                            {[{ name: 'Engineering', icon: "partners/engineering.png" }].map((partner, index) => (
+                                <div key={index} className="partners-listed">
+                                    <Image
+                                        src={partner.icon}
+                                        alt={partner.name}
+                                        width={150}
+                                        height={150}
+                                        className="partners-images"
+                                    />
+                                    <p style={{ width: '100%' }}>{partner.name}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </GlassPanel>
+                </div>
+            </section>
 
           {/* Contact Section */}
-          <section id="contact" style={{
-            padding: '100px 20px',
-            width: '100%',
-          }}>
-            <div style={{
-              maxWidth: '1200px',
-              margin: '0 auto',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '100%',
-            }}>
-              <div style={{
-                textAlign: 'center',
-                marginBottom: '60px',
-              }}>
-                <h2 style={{
-                  fontSize: 'clamp(32px, 4vw, 48px)',
-                  fontWeight: 'bold',
-                  color: 'white',
-                  marginBottom: '20px',
-                  textShadow: '0 4px 20px rgba(0, 0, 0, 1)',
-                }}>
-                  Get in Touch
-                </h2>
-                <p style={{
-                  fontSize: '20px',
-                  textShadow: '0 4px 20px rgba(0, 0, 0, 1)',
-                  color: 'rgba(255,255,255,0.9)',
-                }}>
-                  Let&apos;s discuss how we can help transform your business
-                </p>
+          <section id="contact" className="contact-section">
+            <div className="contact-container">
+              <div className="contact-header">
+                <h2>Get in Touch</h2>
+                <p>Let&apo;s discuss how we can help transform your business</p>
               </div>
 
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-around',
-                alignItems: 'center',
-                flexWrap: 'wrap',
-                gap: '20px',
-                marginBottom: '50px',
-                alignContent: 'center',
-                width: '100%',
-              }}>
-                {[
+              <ContactSectionList
+                contacts={[
                   {
                     icon: 'icons/location.png',
                     title: 'Address',
@@ -835,63 +493,14 @@ export default function Home(): JSX.Element {
                     title: 'Business Info',
                     content: ['P.IVA: 17782391001'],
                   },
-                ].map((item, index) => (
-                  <GlassPanel
-                    key={index}
-                    height={200}
-                    blur={15}
-                    glassColor="rgba(68,136,255,0.05)"
-                    style={{ minWidth: '380px', minHeight: '300px' }}
-                  >
-                    <div
-                      style={{
-                        textAlign: 'center',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        padding: '20px'
-                      }}>
-                      <div style={{ fontSize: '36px', marginBottom: '15px' }}>
-                        <Image
-                          src={item.icon}
-                          alt={item.title}
-                          width={64}
-                          height={64}
-                          style={{
-                            filter: 'drop-shadow(0 2px 10px rgba(0, 0, 0, 1))'
-                          }} />
-                      </div>
-                      <h3 style={{
-                        fontSize: '20px',
-                        marginBottom: '10px',
-                        color: 'white',
-                        textShadow: '0 4px 20px rgba(0, 0, 0, 1)',
-                      }}>
-                        {item.title}
-                      </h3>
-                      {item.content.map((line, i) => (
-                        <p key={i} style={{
-                          fontSize: '16px',
-                          color: 'rgba(255,255,255,0.8)',
-                          margin: '5px 0',
-                        }}>
-                          {line}
-                        </p>
-                      ))}
-                    </div>
-                  </GlassPanel>
-                ))}
-              </div>
+                ]}
+              />
 
-              <div style={{ textAlign: 'center', width: '100%' }}>
+              <div className="contact-button">
                 <GlassButton
+                  className="contact-glass-button"
                   variant="secondary"
                   onClick={() => window.location.href = 'mailto:amministrazione@sfbs.it'}
-                  style={{
-                    width: '100%',
-                    textShadow: '0 4px 20px rgba(0, 0, 0, 1)',
-                  }}
                 >
                   Contact Us Now
                 </GlassButton>
@@ -901,40 +510,24 @@ export default function Home(): JSX.Element {
         </GlassPanel>
 
         {/* Footer */}
-        <footer style={{
-          position: 'fixed',
-          bottom: -10,
-          left: -5,
-          right: -5,
-          zIndex: 100,
-          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-        }}>
-          <GlassPanel
+        <footer className="footer">
+          <GlassPanel className="glass-panel-footer"
             width={'100%'}
             height={80}
             blur={25}
             glassColor="rgba(255, 255, 255, 0.03)"
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
           >
-            <div style={{
-              width: '100%',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              gap: '20px',
-            }}>
+            <div className="social-button-container">
               <div style={{
                 display: 'flex',
                 gap: '20px',
               }}>
-                {[{ name: 'LinkedIn', link: 'https://it.linkedin.com/company/sfb-srl' }, { name: 'GitHub', link: 'https://github.com/Serp1co' }].map((social) => (
-                  <SocialButton key={social.name} name={social.name} link={social.link} />
-                ))}
+                <SocialButtonList
+                  links={[
+                    { name: 'LinkedIn', link: 'https://it.linkedin.com/company/sfb-srl' },
+                    { name: 'GitHub', link: 'https://github.com/Serp1co' }
+                  ]}
+                />
               </div>
             </div>
           </GlassPanel>

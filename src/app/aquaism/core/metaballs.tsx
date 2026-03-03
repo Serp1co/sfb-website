@@ -1,6 +1,6 @@
 "use client";
 import { useFrame } from "@react-three/fiber";
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { PerformanceConfig } from "./performance-configs";
 import * as THREE from "three";
 import PhysicsBody from "./physics-body";

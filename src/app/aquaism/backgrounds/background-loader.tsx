@@ -2,7 +2,7 @@
 
 import { Environment } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
-import { useRef, useMemo, useEffect } from "react";
+import React, { useRef, useMemo, useEffect } from "react";
 import { RGBELoader, EXRLoader } from "three/examples/jsm/Addons.js";
 import * as THREE from "three";
 

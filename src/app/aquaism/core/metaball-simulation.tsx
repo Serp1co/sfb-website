@@ -5,6 +5,7 @@ import { Physics } from "@react-three/rapier";
 import Metaballs from "./metaballs";
 import MouseBall from "./mouse-ball";
 import { PerformanceConfig, getPerformanceConfig } from "./performance-configs";
+import React from "react";
 
 interface MetaballSimulationProps {
   config?: Partial<PerformanceConfig>;
