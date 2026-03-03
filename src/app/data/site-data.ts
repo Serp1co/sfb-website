@@ -32,8 +32,8 @@ export interface StatItem {
 export const STATS: StatItem[] = [
   { number: "50+", label: "Certifications" },
   { number: "42", label: "Projects" },
-  { number: "16", label: "Partnerships" },
-  { number: "100%", label: "Client Satisfaction" },
+  { number: "8", label: "Customers" },
+  { number: "1", label: "Partnership" }
 ];
 
 /* -- Services ------------------------------------------------------ */
@@ -222,15 +222,15 @@ export interface PartnerItem {
 }
 
 export const PARTNERS: PartnerItem[] = [
-  { name: "RedHat", icon: "partners/redhat.svg" },
+  { name: "RedHat", icon: "/partners/redhat.svg" },
 ];
 
 export const CUSTOMERS: PartnerItem[] = [
-    { name: "RedHat", icon: "partners/redhat.svg" },
-    { name: "Engineering", icon: "partners/engineering.svg" },
-    { name: "Evoila", icon: "partners/evoila.svg" },
-    { name: "Reply", icon: "partners/reply.svg" },
-    { name: "TAI", icon: "partners/tai.svg" },
+    { name: "RedHat", icon: "/partners/redhat.svg" },
+    { name: "Engineering", icon: "/partners/engineering.svg" },
+    { name: "Evoila", icon: "/partners/evoila.svg" },
+    { name: "Reply", icon: "/partners/reply.svg" },
+    { name: "TAI", icon: "/partners/tai.svg" },
 
 ];
 
@@ -244,17 +244,17 @@ export interface ContactItem {
 
 export const CONTACTS: ContactItem[] = [
   {
-    icon: "icons/location.png",
+    icon: "/icons/location.png",
     title: "Address",
     content: ["Via Paolo Buzzi, 61", "00143 ROMA (RM), ITALIA"],
   },
   {
-    icon: "icons/mail.png",
+    icon: "/icons/mail.png",
     title: "Email",
     content: ["amministrazione@sfbs.it"],
   },
   {
-    icon: "icons/residential.png",
+    icon: "/icons/residential.png",
     title: "Business Info",
     content: ["P.IVA: 17782391001"],
   },
