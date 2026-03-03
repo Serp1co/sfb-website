@@ -246,7 +246,7 @@ export const CONTACTS: ContactItem[] = [
   {
     icon: "/icons/location.png",
     title: "Address",
-    content: ["Via Paolo Buzzi, 61", "00143 ROMA (RM), ITALIA"],
+    content: ["Viale Luca Gaurico, 93", "00143 ROMA (RM), ITALIA"],
   },
   {
     icon: "/icons/mail.png",
