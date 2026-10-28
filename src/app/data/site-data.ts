@@ -223,6 +223,9 @@ export interface PartnerItem {
 
 export const PARTNERS: PartnerItem[] = [
   { name: "RedHat", icon: "/partners/redhat.svg" },
+  { name: "Commvault", icon: "/partners/commvault.svg" },
+  { name: "NetApp", icon: "/partners/netapp.svg" },
+  { name: "Nutanix", icon: "/partners/nutanix.svg" },
 ];
 
 export const CUSTOMERS: PartnerItem[] = [
@@ -231,7 +234,6 @@ export const CUSTOMERS: PartnerItem[] = [
     { name: "Evoila", icon: "/partners/evoila.svg" },
     { name: "Reply", icon: "/partners/reply.svg" },
     { name: "TAI", icon: "/partners/tai.svg" },
-
 ];
 
 /* -- Contact ------------------------------------------------------- */
