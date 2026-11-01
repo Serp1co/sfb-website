@@ -1,0 +1,619 @@
+/* ------------------------------------------------------------------ */
+/*  Shell: the fixed scene and the overlay that carries the content.   */
+/* ------------------------------------------------------------------ */
+
+.site {
+  position: relative;
+  min-height: 100vh;
+}
+
+.scene {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+}
+
+.scene-fade {
+  position: absolute;
+  inset: 0;
+}
+
+/* Reduced motion: the scene settles unseen, then fades in as a still frame. */
+.scene-fade[data-still="true"][data-reveal="hidden"] {
+  opacity: 0;
+}
+
+.scene-fade[data-still="true"] {
+  transition: opacity 0.8s ease;
+}
+
+.site-overlay {
+  position: relative;
+  z-index: 1;
+}
+
+/*
+ * One column on small screens means text scrolls across the orb. Dim the scene
+ * a little there (the orb stays clearly visible) so copy and logos stay legible.
+ */
+@media (max-width: 1023px) {
+  .scene::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    pointer-events: none;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/*  Glass: the look of things you can touch. Translucent fill,         */
+/*  backdrop blur, a hairline edge that brightens on hover, 24px.      */
+/* ------------------------------------------------------------------ */
+
+.glass {
+  --blur: 20px;
+  background: var(--glass-fill);
+  -webkit-backdrop-filter: blur(var(--blur));
+  backdrop-filter: blur(var(--blur));
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--sheen), var(--shadow-lift);
+  text-shadow: none;
+}
+
+/* Panels: content sits on glass, which refracts the orb whenever it passes behind. */
+.glass-card {
+  transition:
+    border-color 0.3s ease,
+    transform 0.4s var(--ease-out);
+}
+
+@media (hover: hover) {
+  .glass-card:hover {
+    border-color: var(--hairline-hover);
+  }
+
+  .glass-card-lift:hover {
+    transform: translateY(-4px);
+  }
+}
+
+/* Full-bleed glass strip: no side edges, square corners. */
+.glass-band {
+  border-radius: 0;
+  border-inline: 0;
+}
+
+.glass-pill {
+  --blur: 12px;
+  padding: 0.7rem 1.5rem;
+  border-radius: var(--radius-pill);
+  background: var(--blue-tint);
+  box-shadow: var(--sheen);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+/* A control that lives inside a glass card: tinted and edged, but not another blurred layer. */
+.btn-flat {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 3rem;
+  padding: 0 var(--s-5);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  background: var(--blue-tint);
+  color: var(--white);
+  font: 700 1rem/1.2 var(--font);
+  text-decoration: none;
+  text-shadow: none;
+  transition:
+    border-color 0.3s ease,
+    background-color 0.3s ease;
+}
+
+.btn-flat:hover {
+  border-color: var(--hairline-hover);
+  background: var(--blue-hover);
+}
+
+.btn-flat-primary {
+  border-color: rgba(120, 170, 255, 0.55);
+  background: var(--blue-strong);
+}
+
+.btn-flat-primary:hover {
+  border-color: rgba(150, 190, 255, 0.85);
+  background: var(--blue-strong-hover);
+}
+
+/* ------------------------------------------------------------------ */
+/*  Buttons and links (real <a> and <button>, never clickable divs)    */
+/* ------------------------------------------------------------------ */
+
+.btn {
+  --blur: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  min-height: 3.5rem;
+  padding: 0 var(--s-6);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  background: var(--glass-ghost);
+  -webkit-backdrop-filter: blur(var(--blur));
+  backdrop-filter: blur(var(--blur));
+  box-shadow: var(--shadow-rest);
+  color: var(--white);
+  font: 700 1rem/1.2 var(--font);
+  letter-spacing: 0.01em;
+  text-align: center;
+  text-decoration: none;
+  text-shadow: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    border-color 0.3s ease,
+    background-color 0.3s ease,
+    transform 0.3s var(--ease-out);
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn-primary {
+  background: var(--blue-strong);
+  border-color: rgba(120, 170, 255, 0.55);
+}
+
+.btn-sm {
+  min-height: 2.75rem;
+  padding: 0 var(--s-5);
+  font-size: 0.9375rem;
+}
+
+@media (hover: hover) {
+  .btn:hover {
+    border-color: var(--hairline-hover);
+    background: var(--glass-white);
+    transform: translateY(-2px);
+  }
+
+  .btn-primary:hover {
+    background: var(--blue-strong-hover);
+    border-color: rgba(150, 190, 255, 0.85);
+  }
+}
+
+@media (max-width: 480px) {
+  .btn {
+    padding-inline: var(--s-4);
+  }
+
+  /* The two hero actions share one row instead of wrapping. */
+  .hero-actions .btn {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+}
+
+.text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  color: var(--white);
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: rgba(68, 136, 255, 0.8);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.3em;
+  transition:
+    color 0.3s ease,
+    text-decoration-color 0.3s ease;
+}
+
+.text-link:hover {
+  color: var(--blue);
+  text-decoration-color: currentColor;
+}
+
+.icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Tags: plain labels, no blur (they are not controls)                */
+/* ------------------------------------------------------------------ */
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  list-style: none;
+  padding: 0;
+}
+
+.tag {
+  display: inline-block;
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-pill);
+  background: var(--blue-tint);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  text-shadow: none;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Header                                                             */
+/* ------------------------------------------------------------------ */
+
+.site-header {
+  position: fixed;
+  top: var(--s-3);
+  left: var(--s-3);
+  right: var(--s-3);
+  z-index: 1000;
+}
+
+.header-bar {
+  --blur: 25px;
+  display: flex;
+  align-items: center;
+  gap: var(--s-5);
+  max-width: var(--max);
+  min-height: 4rem;
+  margin-inline: auto;
+  padding: var(--s-2) var(--s-3) var(--s-2) var(--s-5);
+  background: var(--glass-bar);
+}
+
+.header-logo {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  border-radius: var(--radius-sm);
+}
+
+.header-logo img {
+  width: auto;
+  height: 2.25rem;
+}
+
+.nav {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  margin-left: var(--s-4);
+}
+
+.nav-list {
+  display: flex;
+  align-items: center;
+  gap: var(--s-6);
+  list-style: none;
+  padding: 0;
+}
+
+.nav-item {
+  position: relative;
+}
+
+.nav-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  min-height: 2.75rem;
+  color: var(--white);
+  text-decoration: none;
+  text-shadow: none;
+  transition: color 0.3s ease;
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0.4rem;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--blue);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s var(--ease-out);
+}
+
+.nav-link:hover {
+  color: var(--blue);
+}
+
+.nav-link[aria-current="true"] {
+  color: var(--blue);
+}
+
+.nav-link[aria-current="true"]::after {
+  transform: scaleX(1);
+}
+
+.nav-chevron {
+  width: 0.9rem;
+  height: 0.9rem;
+  opacity: 0.8;
+  transition: transform 0.2s ease;
+}
+
+.has-menu:hover .nav-chevron,
+.has-menu:focus-within .nav-chevron {
+  transform: rotate(180deg);
+}
+
+.nav-menu {
+  --blur: 25px;
+  position: absolute;
+  top: calc(100% + 0.25rem);
+  left: 50%;
+  z-index: 1001;
+  min-width: 12.5rem;
+  padding: var(--s-2);
+  border-radius: var(--radius-md);
+  background: var(--night);
+  list-style: none;
+  opacity: 0;
+  visibility: hidden;
+  translate: -50% 6px;
+  transition:
+    opacity 0.2s ease,
+    translate 0.25s var(--ease-out),
+    visibility 0s linear 0.25s;
+}
+
+/* Keeps the menu open while the pointer crosses the gap. */
+.nav-menu::before {
+  content: "";
+  position: absolute;
+  inset: -0.5rem 0 auto;
+  height: 0.5rem;
+}
+
+.has-menu:hover .nav-menu,
+.has-menu:focus-within .nav-menu {
+  opacity: 1;
+  visibility: visible;
+  translate: -50% 0;
+  transition-delay: 0s;
+}
+
+.has-menu[data-dismissed="true"] .nav-menu {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.nav-menu a {
+  display: flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0 var(--s-4);
+  border-radius: var(--radius-sm);
+  color: var(--mist);
+  font-size: 0.9375rem;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.nav-menu a:hover {
+  background: var(--blue-hover);
+  color: var(--white);
+}
+
+.nav-menu a[aria-current="true"] {
+  color: var(--blue);
+}
+
+.header-actions {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--s-3);
+  margin-left: auto;
+}
+
+.lang {
+  display: inline-flex;
+  padding: 2px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-pill);
+}
+
+.lang a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  border-radius: var(--radius-pill);
+  color: var(--mist);
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  text-shadow: none;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.lang a:hover {
+  color: var(--white);
+}
+
+.lang a[aria-current="true"] {
+  background: var(--blue-hover);
+  color: var(--white);
+}
+
+.menu-button {
+  display: none;
+  width: 2.75rem;
+  height: 2.75rem;
+  place-items: center;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-md);
+  background: var(--glass-ghost);
+  color: var(--white);
+  cursor: pointer;
+}
+
+.mobile-menu {
+  --blur: 25px;
+  margin-top: var(--s-2);
+  padding: var(--s-3);
+  max-height: calc(100svh - 6.5rem);
+  overflow-y: auto;
+  background: var(--night);
+}
+
+.mobile-menu[hidden] {
+  display: none;
+}
+
+.mobile-menu ul {
+  list-style: none;
+  padding: 0;
+}
+
+.mobile-menu a:not(.btn) {
+  display: flex;
+  align-items: center;
+  min-height: 3rem;
+  padding: 0 var(--s-4);
+  border-radius: var(--radius-md);
+  color: var(--white);
+  text-decoration: none;
+  text-shadow: none;
+}
+
+.mobile-menu a:not(.btn):hover,
+.mobile-menu a[aria-current="true"] {
+  background: var(--blue-hover);
+}
+
+.mobile-menu .mobile-sub a:not(.btn) {
+  min-height: 2.75rem;
+  padding-left: var(--s-7);
+  color: var(--mist);
+  font-size: 0.9375rem;
+}
+
+.mobile-menu .btn {
+  width: 100%;
+  margin-top: var(--s-3);
+}
+
+@media (max-width: 959px) {
+  .nav,
+  .header-actions .header-cta {
+    display: none;
+  }
+
+  .menu-button {
+    display: inline-grid;
+  }
+
+  .header-bar {
+    padding-left: var(--s-4);
+  }
+}
+
+@media (min-width: 960px) {
+  .mobile-menu {
+    display: none;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/*  Footer: a glass bar. Fixed to the bottom on wide screens, as before;     */
+/*  a normal block at the end of the page on phones, where it would cover   */
+/*  too much of the screen.                                                  */
+/* ------------------------------------------------------------------ */
+
+.site-footer {
+  padding: var(--s-5) var(--s-3) var(--s-3);
+}
+
+.footer-inner {
+  --blur: 25px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-1) var(--s-6);
+  max-width: var(--max);
+  min-height: 3.5rem;
+  margin-inline: auto;
+  padding: var(--s-1) var(--s-5);
+  background: var(--glass-bar);
+}
+
+@media (min-width: 960px) {
+  .site-footer {
+    position: fixed;
+    right: var(--s-3);
+    bottom: var(--s-3);
+    left: var(--s-3);
+    z-index: 100;
+    padding: 0;
+    pointer-events: none;
+  }
+
+  .footer-inner {
+    pointer-events: auto;
+  }
+}
+
+.footer-tagline {
+  color: var(--dim);
+  font-size: 0.9375rem;
+}
+
+.footer-links {
+  display: flex;
+  gap: var(--s-5);
+  list-style: none;
+  padding: 0;
+}
+
+.footer-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  color: var(--dim);
+  font-size: 0.9375rem;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+  color: var(--blue);
+}

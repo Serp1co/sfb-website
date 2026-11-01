@@ -1,0 +1,590 @@
+/* ------------------------------------------------------------------ */
+/*  Page structure: centred sections, content on frosted glass panels. */
+/*  The orb sits fixed at the centre of the viewport; panels blur it   */
+/*  and refract it as it passes behind them.                           */
+/* ------------------------------------------------------------------ */
+
+.container {
+  width: min(100%, var(--max));
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.section {
+  position: relative;
+  padding-block: clamp(4rem, 10vh, 6.5rem);
+  scroll-margin-top: 5.5rem;
+}
+
+/* A faint strip that sets one section apart from its neighbours. No blur: it spans the whole viewport. */
+.section-band {
+  background: rgba(255, 255, 255, 0.025);
+  border-block: 1px solid var(--hairline-soft);
+}
+
+.section-head {
+  display: grid;
+  justify-items: center;
+  gap: var(--s-4);
+  margin-bottom: var(--s-8);
+  text-align: center;
+}
+
+.centered {
+  text-align: center;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Type roles                                                         */
+/* ------------------------------------------------------------------ */
+
+.h1 {
+  font-size: clamp(2rem, 4.2vw, 4rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.08;
+  overflow-wrap: break-word;
+}
+
+.h2 {
+  font-size: clamp(1.75rem, 3vw, 2.75rem);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+
+.h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.lead {
+  max-width: 48ch;
+  color: var(--mist);
+  font-size: clamp(1.0625rem, 0.4vw + 0.95rem, 1.25rem);
+  line-height: 1.65;
+}
+
+.copy {
+  max-width: 46ch;
+  color: var(--mist);
+  line-height: 1.75;
+}
+
+.section-head .copy {
+  text-align: center;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Hero                                                               */
+/* ------------------------------------------------------------------ */
+
+.hero {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding-block: 7.5rem var(--s-8);
+}
+
+.hero-inner {
+  display: grid;
+  justify-items: center;
+  gap: var(--s-5);
+  text-align: center;
+}
+
+.hero-logo {
+  width: auto;
+  max-width: 62%;
+  height: clamp(4rem, 15vh, 8.5rem);
+  filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 1));
+}
+
+.claim-lead {
+  display: block;
+}
+
+.claim-emphasis {
+  display: block;
+  margin-top: 0.12em;
+  color: var(--blue);
+}
+
+.hero .lead {
+  max-width: 50ch;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--s-4);
+  margin-top: var(--s-2);
+}
+
+/* Doors: the three practices as quick links, stack named up front. */
+.doors {
+  width: 100%;
+  max-width: 920px;
+  margin-top: var(--s-6);
+}
+
+.doors ul {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--s-4);
+  list-style: none;
+  padding: 0;
+}
+
+.door {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--s-1) var(--s-3);
+  height: 100%;
+  padding: var(--s-4) var(--s-5);
+  color: var(--white);
+  text-align: left;
+  text-decoration: none;
+}
+
+.door-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  transition: color 0.3s ease;
+}
+
+.door-tech {
+  grid-column: 1;
+  color: var(--mist);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.door .icon {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  transition: transform 0.3s var(--ease-out);
+}
+
+.door:hover .door-title {
+  color: var(--blue);
+}
+
+.door:hover .icon {
+  transform: translateX(4px);
+}
+
+/* The practices are the next section down on a phone; no need to repeat them. */
+@media (max-width: 899px) {
+  .doors {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .rise {
+    animation: rise 0.9s var(--ease-out) backwards;
+  }
+
+  .rise:nth-child(2) {
+    animation-delay: 0.1s;
+  }
+
+  .rise:nth-child(3) {
+    animation-delay: 0.2s;
+  }
+
+  .rise:nth-child(4) {
+    animation-delay: 0.3s;
+  }
+
+  .rise:nth-child(5) {
+    animation-delay: 0.4s;
+  }
+}
+
+/*
+ * A focus pull, not a fade: the text is painted from the first frame (a fade
+ * from opacity 0 delays Largest Contentful Paint by the length of the fade).
+ */
+@keyframes rise {
+  from {
+    transform: translateY(14px);
+    filter: blur(8px);
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/*  About: Mission and Approach panels                                 */
+/* ------------------------------------------------------------------ */
+
+.panel-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  justify-content: center;
+  gap: var(--s-5);
+}
+
+.panel {
+  display: grid;
+  flex: 1 1 340px;
+  align-content: center;
+  gap: var(--s-4);
+  max-width: 580px;
+  padding: var(--s-6);
+}
+
+.panel .copy {
+  max-width: none;
+  font-size: 1.125rem;
+  line-height: 1.8;
+}
+
+.checks {
+  display: grid;
+  gap: var(--s-5);
+  list-style: none;
+  padding: 0;
+}
+
+.check {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: var(--s-3);
+}
+
+.check-icon {
+  margin-top: 0.15rem;
+  color: var(--blue);
+}
+
+.check strong,
+.check span {
+  display: block;
+}
+
+.check span {
+  margin-top: var(--s-1);
+  color: var(--mist);
+  line-height: 1.65;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Cards: services and contact                                        */
+/* ------------------------------------------------------------------ */
+
+.card-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  justify-content: center;
+  gap: var(--s-5);
+  list-style: none;
+  padding: 0;
+}
+
+.service-card {
+  display: flex;
+  flex: 1 1 300px;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-4);
+  max-width: 380px;
+  padding: var(--s-5);
+  text-align: center;
+}
+
+.service-image {
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid var(--hairline-soft);
+  border-radius: var(--radius-md);
+  background: rgba(0, 6, 92, 0.25);
+}
+
+.service-image img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 6 / 5;
+  object-fit: cover;
+  opacity: 0.8;
+}
+
+.practice-title {
+  margin-top: var(--s-2);
+  font-size: clamp(1.375rem, 1.6vw, 1.625rem);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.practice-summary {
+  color: var(--mist);
+  line-height: 1.65;
+}
+
+.tag-list-center {
+  justify-content: center;
+}
+
+.service-card .btn-flat {
+  margin-top: auto;
+}
+
+.info-card {
+  display: grid;
+  flex: 1 1 280px;
+  justify-items: center;
+  align-content: start;
+  gap: var(--s-3);
+  max-width: 360px;
+  padding: var(--s-6) var(--s-5);
+  text-align: center;
+}
+
+.info-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  color: var(--blue);
+}
+
+.info-card p {
+  color: var(--mist);
+  line-height: 1.6;
+}
+
+.fact-line {
+  display: block;
+}
+
+.fact-muted {
+  color: var(--dim);
+  font-size: 0.875rem;
+}
+
+.address-row {
+  display: grid;
+  justify-items: center;
+  gap: var(--s-3);
+}
+
+.address-link {
+  color: var(--white);
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: rgba(68, 136, 255, 0.8);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.3em;
+  overflow-wrap: anywhere;
+}
+
+.address-link:hover {
+  color: var(--blue);
+}
+
+.copy-status {
+  min-height: 1.5rem;
+  margin-top: var(--s-2);
+  color: var(--mist);
+  font-size: 0.875rem;
+}
+
+.contact-actions {
+  display: grid;
+  justify-items: center;
+  gap: var(--s-4);
+  margin-top: var(--s-7);
+}
+
+.btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--s-3);
+}
+
+/* ------------------------------------------------------------------ */
+/*  Partners and customers: two glass bands                            */
+/* ------------------------------------------------------------------ */
+
+.logo-band {
+  margin-top: var(--s-5);
+  padding-block: var(--s-6);
+}
+
+.logo-band-amber {
+  background: var(--glass-amber);
+}
+
+.logo-band-silver {
+  background: var(--glass-silver);
+}
+
+.logo-label {
+  margin-bottom: var(--s-5);
+  color: var(--mist);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.logo-flex {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--s-6) var(--s-8);
+  list-style: none;
+  padding: 0;
+}
+
+.logo-cell {
+  display: grid;
+  justify-items: center;
+  gap: var(--s-2);
+}
+
+.logo-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 9rem;
+  height: 3.5rem;
+}
+
+.logo-img {
+  width: auto;
+  max-width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+  opacity: 0.9;
+}
+
+/* Assets that already carry their own one-tone treatment. */
+.logo-img-toned {
+  filter: none;
+}
+
+.logo-name {
+  color: var(--dim);
+  font-size: 0.875rem;
+}
+
+.logo-note {
+  margin-top: var(--s-5);
+  color: var(--dim);
+  font-size: 0.9375rem;
+  text-align: center;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Practice pages                                                     */
+/* ------------------------------------------------------------------ */
+
+.detail-hero {
+  padding-block: 9rem var(--s-6);
+}
+
+.detail-hero .section-head {
+  margin-bottom: 0;
+}
+
+.back-link {
+  margin-bottom: var(--s-2);
+}
+
+.detail-block {
+  padding-block: clamp(2.5rem, 6vh, 4rem);
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 28px;
+  margin-top: var(--s-7);
+  list-style: none;
+  padding: 0;
+}
+
+.feature-card {
+  display: grid;
+  align-content: start;
+  gap: var(--s-3);
+  padding: var(--s-6) 1.75rem;
+}
+
+.feature-card p {
+  color: var(--mist);
+  font-size: 0.9375rem;
+  line-height: 1.75;
+}
+
+.pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--s-4);
+  margin-top: var(--s-6);
+  list-style: none;
+  padding: 0;
+}
+
+.cta-card {
+  display: grid;
+  justify-items: center;
+  gap: var(--s-4);
+  max-width: 700px;
+  margin-inline: auto;
+  padding: var(--s-7) var(--s-6);
+  text-align: center;
+}
+
+.other-practices {
+  display: grid;
+  justify-items: center;
+  gap: var(--s-2);
+  margin-top: var(--s-3);
+}
+
+.other-practices ul {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--s-1) var(--s-5);
+  list-style: none;
+  padding: 0;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Small screens                                                      */
+/* ------------------------------------------------------------------ */
+
+@media (max-width: 719px) {
+  .section-head {
+    margin-bottom: var(--s-7);
+  }
+
+  .panel,
+  .info-card {
+    padding: var(--s-5);
+  }
+
+  .cta-card {
+    padding: var(--s-6) var(--s-5);
+  }
+
+  .logo-flex {
+    gap: var(--s-5) var(--s-6);
+  }
+
+  /* Less blur on a phone: the same frosted look at a fraction of the cost. */
+  .glass {
+    --blur: 12px;
+  }
+}

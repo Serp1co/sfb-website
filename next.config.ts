@@ -18,6 +18,12 @@ const nextConfig: NextConfig = {
   
   // If you're using React's strict mode (recommended)
   reactStrictMode: true,
+
+  // One root layout per language (so <html lang> is right in the static HTML)
+  // means there is no single layout to compose a 404 from; see global-not-found.tsx.
+  experimental: {
+    globalNotFound: true,
+  },
   
   // If you need to configure allowed domains for images
   // images: {

@@ -1,0 +1,403 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-01T20:02:54.684Z",
+  "title": "Design System: SFB S.R.L.",
+  "extensions": {
+    "colorMeta": {
+      "circuit-glow-blue": {
+        "role": "primary",
+        "displayName": "Circuit Glow Blue",
+        "canonical": "oklch(64.5% 0.190 260.7)",
+        "tonalRamp": [
+          "#000826",
+          "#001f5a",
+          "#093b8e",
+          "#1f5ac1",
+          "#3a7cf1",
+          "#70a4fd",
+          "#accafd",
+          "#e6effd"
+        ]
+      },
+      "logo-cobalt": {
+        "role": "secondary",
+        "displayName": "Logo Cobalt",
+        "canonical": "oklch(50.7% 0.274 264.4)",
+        "tonalRamp": [
+          "#000036",
+          "#01017b",
+          "#0216c0",
+          "#0b3ff8",
+          "#4077fd",
+          "#77a2ff",
+          "#afc9fe",
+          "#e8effc"
+        ]
+      },
+      "fog-blue": {
+        "role": "secondary",
+        "displayName": "Fog Blue",
+        "canonical": "oklch(64.1% 0.197 253.0)",
+        "tonalRamp": [
+          "#000b1d",
+          "#00254b",
+          "#04427c",
+          "#0261b3",
+          "#0b82eb",
+          "#5ca8fe",
+          "#a3cdfe",
+          "#e4f0fe"
+        ]
+      },
+      "void-black": {
+        "role": "neutral",
+        "displayName": "Void Black",
+        "canonical": "oklch(0.0% 0.000 0.0)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
+        ]
+      },
+      "signal-white": {
+        "role": "neutral",
+        "displayName": "Signal White",
+        "canonical": "oklch(100.0% 0.000 89.9)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
+        ]
+      },
+      "logo-light": {
+        "role": "neutral",
+        "displayName": "Logo Light",
+        "canonical": "oklch(94.9% 0.008 271.3)",
+        "tonalRamp": [
+          "#0b0b0c",
+          "#242527",
+          "#414245",
+          "#606165",
+          "#818286",
+          "#a3a5aa",
+          "#c7c9ce",
+          "#eceef4"
+        ]
+      },
+      "logo-charcoal": {
+        "role": "neutral",
+        "displayName": "Logo Charcoal",
+        "canonical": "oklch(41.0% 0.006 0.2)",
+        "tonalRamp": [
+          "#0c0b0b",
+          "#272425",
+          "#454142",
+          "#646061",
+          "#858182",
+          "#a7a4a5",
+          "#cbc8c9",
+          "#efeeee"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Hero claim and practice-page titles."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Section titles."
+      },
+      "card-title": {
+        "displayName": "Card title",
+        "purpose": "Practice names on service cards."
+      },
+      "lead": {
+        "displayName": "Lead",
+        "purpose": "The sentence under a section title."
+      },
+      "panel-copy": {
+        "displayName": "Panel copy",
+        "purpose": "The Mission text."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Panel and card headings, point titles."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Running copy."
+      },
+      "small": {
+        "displayName": "Small",
+        "purpose": "Tags, menu items, door stacks, footer text."
+      },
+      "caption": {
+        "displayName": "Caption",
+        "purpose": "Logo names, fact labels, language switch."
+      },
+      "button": {
+        "displayName": "Button",
+        "purpose": "Button labels."
+      },
+      "tag": {
+        "displayName": "Tag",
+        "purpose": "Technology tags and pills."
+      }
+    },
+    "shadows": [
+      {
+        "name": "panel-lift",
+        "value": "inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 10px 40px rgba(0, 0, 0, 0.2)",
+        "purpose": "Glass panels, cards and bands: top highlight plus a soft lift."
+      },
+      {
+        "name": "button-rest",
+        "value": "0 4px 15px rgba(0, 0, 0, 0.1)",
+        "purpose": "Glass buttons."
+      },
+      {
+        "name": "text-halo",
+        "value": "0 2px 16px rgba(0, 0, 0, 0.95)",
+        "purpose": "Legibility halo for text over the open scene; set once on body, reset to none on glass."
+      },
+      {
+        "name": "hairline-border",
+        "value": "1px solid rgba(255, 255, 255, 0.2)",
+        "purpose": "Edge of every glass surface; 40% white on hover."
+      },
+      {
+        "name": "glass-sheen",
+        "value": "linear-gradient(145deg, rgba(255,255,255,0.14), rgba(255,255,255,0.05) 60%, rgba(255,255,255,0.08))",
+        "purpose": "Panel fill: reads as glass even over pure black."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Exponential ease-out for lifts, the nav underline and the hero focus pull."
+      },
+      {
+        "name": "glass-transition",
+        "value": "0.3s ease",
+        "purpose": "Edge, background and colour changes on glass."
+      },
+      {
+        "name": "card-lift",
+        "value": "translateY(-4px) over 0.4s ease-out",
+        "purpose": "Service, feature and door cards on hover (pointer devices only)."
+      },
+      {
+        "name": "hero-rise",
+        "value": "0.9s ease-out: translateY(14px) and blur(8px) to rest, staggered 0.1s",
+        "purpose": "The one authored entrance. Painted from the first frame (no opacity fade) so it does not delay LCP; off with reduced motion."
+      },
+      {
+        "name": "scene-still",
+        "value": "scene settles hidden for 6s, then fades in over 0.8s",
+        "purpose": "Reduced motion: the visitor sees only the finished orb."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "compact-buttons",
+        "value": "480px"
+      },
+      {
+        "name": "light-blur",
+        "value": "720px"
+      },
+      {
+        "name": "doors",
+        "value": "900px"
+      },
+      {
+        "name": "nav-and-footer",
+        "value": "960px"
+      },
+      {
+        "name": "scene-dim-lifts",
+        "value": "1024px"
+      },
+      {
+        "name": "container",
+        "value": "1240px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Glass Card",
+      "kind": "card",
+      "refersTo": "glass-card",
+      "description": "A frosted panel: soft sheen fill, 20px blur, hairline edge, inner top highlight, lift shadow. Lifts 4px on hover.",
+      "html": "<article class=\"ds-card\"><h3>Our mission</h3><p>We help organisations transform and thrive in a fast-moving digital landscape.</p></article>",
+      "css": ".ds-card { background: linear-gradient(145deg, rgba(255,255,255,0.14), rgba(255,255,255,0.05) 60%, rgba(255,255,255,0.08)); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.2); border-radius: 24px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 40px rgba(0,0,0,0.2); color: #fff; font-family: Sora, 'Segoe UI', system-ui, sans-serif; max-width: 420px; padding: 32px; transition: border-color 0.3s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1); } .ds-card h3 { margin: 0 0 16px; font-size: 20px; font-weight: 700; } .ds-card p { margin: 0; color: rgba(255,255,255,0.8); font-size: 18px; line-height: 1.8; } .ds-card:hover { border-color: rgba(255,255,255,0.4); transform: translateY(-4px); }"
+    },
+    {
+      "name": "Service Card",
+      "kind": "card",
+      "refersTo": "glass-card",
+      "description": "A practice on the landing page: image, name, summary, four technology tags and a flat link. Controls inside are flat, never nested glass.",
+      "html": "<article class=\"ds-service\"><div class=\"ds-service-img\"></div><h3>Infrastructure</h3><p>Solid expertise in managing and orchestrating your infrastructures with cloud-native solutions.</p><div class=\"ds-tags\"><span class=\"ds-tag\">OpenShift</span><span class=\"ds-tag\">Kubernetes</span><span class=\"ds-tag\">Ansible</span><span class=\"ds-tag\">Terraform</span></div><a class=\"ds-flat\" href=\"#\">Learn more <svg viewBox=\"0 0 24 24\" width=\"20\" height=\"20\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14M13 6l6 6-6 6\"/></svg></a></article>",
+      "css": ".ds-service { background: linear-gradient(145deg, rgba(255,255,255,0.14), rgba(255,255,255,0.05) 60%, rgba(255,255,255,0.08)); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.2); border-radius: 24px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 40px rgba(0,0,0,0.2); color: #fff; font-family: Sora, 'Segoe UI', system-ui, sans-serif; display: flex; flex-direction: column; align-items: center; gap: 16px; max-width: 380px; padding: 24px; text-align: center; } .ds-service-img { width: 100%; aspect-ratio: 6 / 5; border: 1px solid rgba(255,255,255,0.12); border-radius: 16px; background: linear-gradient(160deg, rgba(0,6,92,0.25), rgba(68,136,255,0.35)); } .ds-service h3 { margin: 8px 0 0; font-size: 26px; font-weight: 700; } .ds-service p { margin: 0; color: rgba(255,255,255,0.8); line-height: 1.65; } .ds-tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; } .ds-tag { display: inline-block; padding: 6px 14px; border: 1px solid rgba(255,255,255,0.2); border-radius: 999px; background: rgba(68,136,255,0.1); color: #fff; font: 700 15px/1.6 Sora, 'Segoe UI', system-ui, sans-serif; letter-spacing: 0.01em; white-space: nowrap; } .ds-flat { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 24px; border: 1px solid rgba(255,255,255,0.2); border-radius: 24px; background: rgba(68,136,255,0.1); color: #fff; font: 700 16px/1.2 Sora, 'Segoe UI', system-ui, sans-serif; text-decoration: none; transition: border-color 0.3s ease, background-color 0.3s ease; margin-top: auto; } .ds-flat:hover { border-color: rgba(255,255,255,0.4); background: rgba(68,136,255,0.16); } .ds-flat:focus-visible { outline: 2px solid #4488ff; outline-offset: 3px; }"
+    },
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Blue glass with a blue edge: the single most important action in a group.",
+      "html": "<a class=\"ds-btn-primary\" href=\"#\"><svg viewBox=\"0 0 24 24\" width=\"20\" height=\"20\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect x=\"3\" y=\"5\" width=\"18\" height=\"14\" rx=\"2\"/><path d=\"m3.5 7 8.5 6 8.5-6\"/></svg>Contact us</a>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 56px; padding: 0 32px; border-radius: 24px; -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); box-shadow: 0 4px 15px rgba(0,0,0,0.1); color: #fff; font: 700 16px/1.2 Sora, 'Segoe UI', system-ui, sans-serif; letter-spacing: 0.01em; text-decoration: none; white-space: nowrap; cursor: pointer; transition: border-color 0.3s ease, background-color 0.3s ease, transform 0.3s cubic-bezier(0.16,1,0.3,1); background: rgba(68,136,255,0.28); border: 1px solid rgba(120,170,255,0.55); } .ds-btn-primary:hover { background: rgba(68,136,255,0.42); border-color: rgba(150,190,255,0.85); transform: translateY(-2px); } .ds-btn-primary:focus-visible { outline: 2px solid #4488ff; outline-offset: 3px; } .ds-btn-primary:active { transform: scale(0.98); }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Near-clear glass for the secondary action beside a primary.",
+      "html": "<a class=\"ds-btn-ghost\" href=\"#\">See services</a>",
+      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 56px; padding: 0 32px; border-radius: 24px; -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); box-shadow: 0 4px 15px rgba(0,0,0,0.1); color: #fff; font: 700 16px/1.2 Sora, 'Segoe UI', system-ui, sans-serif; letter-spacing: 0.01em; text-decoration: none; white-space: nowrap; cursor: pointer; transition: border-color 0.3s ease, background-color 0.3s ease, transform 0.3s cubic-bezier(0.16,1,0.3,1); background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); } .ds-btn-ghost:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.4); transform: translateY(-2px); } .ds-btn-ghost:focus-visible { outline: 2px solid #4488ff; outline-offset: 3px; } .ds-btn-ghost:active { transform: scale(0.98); }"
+    },
+    {
+      "name": "Navigation Bar",
+      "kind": "nav",
+      "refersTo": "header-bar",
+      "description": "Floating dark glass bar: reversed logo and links, with a drawn underline for the current section.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Main\"><span class=\"ds-nav-logo\">SFB</span><a class=\"ds-nav-link ds-nav-current\" href=\"#\" aria-current=\"true\">Home</a><a class=\"ds-nav-link\" href=\"#\">About</a><a class=\"ds-nav-link\" href=\"#\">Services <svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m6 9 6 6 6-6\"/></svg></a><a class=\"ds-nav-link\" href=\"#\">Partners</a><a class=\"ds-nav-link\" href=\"#\">Contact</a></nav>",
+      "css": ".ds-nav { display: flex; align-items: center; gap: 28px; min-height: 64px; padding: 8px 24px; background: rgba(10,10,24,0.58); -webkit-backdrop-filter: blur(25px); backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.2); border-radius: 24px; font-family: Sora, 'Segoe UI', system-ui, sans-serif; } .ds-nav-logo { margin-right: 12px; color: #0e44fe; font-weight: 700; font-size: 22px; } .ds-nav-link { position: relative; display: inline-flex; align-items: center; gap: 5px; min-height: 44px; color: #fff; text-decoration: none; transition: color 0.3s ease; } .ds-nav-link::after { content: \"\"; position: absolute; left: 0; right: 0; bottom: 6px; height: 2px; border-radius: 2px; background: #4488ff; transform: scaleX(0); transform-origin: left; transition: transform 0.35s cubic-bezier(0.16,1,0.3,1); } .ds-nav-link:hover { color: #4488ff; } .ds-nav-link:focus-visible { outline: 2px solid #4488ff; outline-offset: 3px; } .ds-nav-current { color: #4488ff; } .ds-nav-current::after { transform: scaleX(1); }"
+    },
+    {
+      "name": "Language Switch",
+      "kind": "chip",
+      "refersTo": "lang-switch",
+      "description": "EN | IT as two real links in a pill outline; the current language is tinted blue.",
+      "html": "<nav class=\"ds-lang\" aria-label=\"Language\"><a href=\"#\" lang=\"en\" aria-current=\"true\">EN</a><a href=\"#\" lang=\"it\">IT</a></nav>",
+      "css": ".ds-lang { display: inline-flex; padding: 2px; border: 1px solid rgba(255,255,255,0.2); border-radius: 999px; font-family: Sora, 'Segoe UI', system-ui, sans-serif; } .ds-lang a { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; border-radius: 999px; color: rgba(255,255,255,0.8); font-size: 14px; font-weight: 700; letter-spacing: 0.04em; text-decoration: none; transition: background-color 0.2s ease, color 0.2s ease; } .ds-lang a:hover { color: #fff; } .ds-lang a:focus-visible { outline: 2px solid #4488ff; outline-offset: 2px; } .ds-lang a[aria-current=\"true\"] { background: rgba(68,136,255,0.16); color: #fff; }"
+    },
+    {
+      "name": "Glass Pill",
+      "kind": "chip",
+      "refersTo": "glass-pill",
+      "description": "A technology on a practice page: a small glass surface with 12px blur and a blue tint.",
+      "html": "<span class=\"ds-pill\">Kubernetes</span>",
+      "css": ".ds-pill { display: inline-block; padding: 11px 24px; border: 1px solid rgba(255,255,255,0.2); border-radius: 999px; background: rgba(68,136,255,0.1); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18); color: #fff; font: 700 15px/1.6 Sora, 'Segoe UI', system-ui, sans-serif; letter-spacing: 0.01em; white-space: nowrap; }"
+    },
+    {
+      "name": "Logo Band",
+      "kind": "custom",
+      "refersTo": "glass-band",
+      "description": "A full-bleed strip of amber-tinted glass holding one-tone logos with their names beneath.",
+      "html": "<div class=\"ds-band\"><h3>Technology partners</h3><ul><li><span class=\"ds-mark\"></span>Red Hat</li><li><span class=\"ds-mark\"></span>Commvault</li><li><span class=\"ds-mark\"></span>NetApp</li></ul></div>",
+      "css": ".ds-band { background: linear-gradient(145deg, rgba(255,255,255,0.14), rgba(255,255,255,0.05) 60%, rgba(255,255,255,0.08)); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.2); border-radius: 24px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 40px rgba(0,0,0,0.2); color: #fff; font-family: Sora, 'Segoe UI', system-ui, sans-serif; background: rgba(255,174,0,0.08); border-radius: 0; border-left: 0; border-right: 0; padding: 32px 24px; text-align: center; } .ds-band h3 { margin: 0 0 24px; color: rgba(255,255,255,0.8); font-size: 15px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; } .ds-band ul { display: flex; flex-wrap: wrap; justify-content: center; gap: 32px 64px; margin: 0; padding: 0; list-style: none; } .ds-band li { display: grid; justify-items: center; gap: 8px; color: rgba(255,255,255,0.7); font-size: 14px; } .ds-mark { width: 56px; height: 56px; border-radius: 12px; background: rgba(255,255,255,0.9); }"
+    },
+    {
+      "name": "Door",
+      "kind": "card",
+      "refersTo": "glass-card",
+      "description": "A hero quick link as a small glass card: practice name, three technologies and an arrow that nudges on hover.",
+      "html": "<a class=\"ds-door\" href=\"#\"><span class=\"ds-door-title\">Security</span><span class=\"ds-door-tech\">Keycloak · RHBK · SPID/CIE</span><svg viewBox=\"0 0 24 24\" width=\"20\" height=\"20\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14M13 6l6 6-6 6\"/></svg></a>",
+      "css": ".ds-door { background: linear-gradient(145deg, rgba(255,255,255,0.14), rgba(255,255,255,0.05) 60%, rgba(255,255,255,0.08)); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.2); border-radius: 24px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 40px rgba(0,0,0,0.2); color: #fff; font-family: Sora, 'Segoe UI', system-ui, sans-serif; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 4px 12px; max-width: 290px; padding: 16px 24px; text-decoration: none; text-align: left; transition: border-color 0.3s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1); } .ds-door-title { font-size: 18px; font-weight: 700; transition: color 0.3s ease; } .ds-door-tech { grid-column: 1; color: rgba(255,255,255,0.8); font-size: 14px; } .ds-door svg { grid-column: 2; grid-row: 1 / span 2; transition: transform 0.3s cubic-bezier(0.16,1,0.3,1); } .ds-door:hover { border-color: rgba(255,255,255,0.4); transform: translateY(-4px); } .ds-door:hover .ds-door-title { color: #4488ff; } .ds-door:hover svg { transform: translateX(4px); } .ds-door:focus-visible { outline: 2px solid #4488ff; outline-offset: 3px; }"
+    },
+    {
+      "name": "Footer Bar",
+      "kind": "custom",
+      "refersTo": "footer-bar",
+      "description": "Dark glass bar fixed to the bottom on wide screens: tagline left, social links right.",
+      "html": "<footer class=\"ds-footer\"><span>SFB S.R.L. — Strive For Better</span><span class=\"ds-footer-links\"><a href=\"#\">LinkedIn</a><a href=\"#\">GitHub</a></span></footer>",
+      "css": ".ds-footer { display: flex; align-items: center; justify-content: space-between; min-height: 56px; padding: 4px 24px; background: rgba(10,10,24,0.58); -webkit-backdrop-filter: blur(25px); backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.2); border-radius: 24px; color: rgba(255,255,255,0.7); font: 400 15px/1.6 Sora, 'Segoe UI', system-ui, sans-serif; } .ds-footer-links { display: flex; gap: 24px; } .ds-footer a { display: inline-flex; align-items: center; min-height: 44px; color: rgba(255,255,255,0.7); text-decoration: none; transition: color 0.3s ease; } .ds-footer a:hover { color: #4488ff; } .ds-footer a:focus-visible { outline: 2px solid #4488ff; outline-offset: 3px; }"
+    },
+    {
+      "name": "Section Header",
+      "kind": "custom",
+      "refersTo": "headline",
+      "description": "Centred bold headline over a quiet lead, on the text halo.",
+      "html": "<header class=\"ds-section-header\"><h2>Services</h2><p>Three practices, one team.</p></header>",
+      "css": ".ds-section-header { display: grid; justify-items: center; gap: 16px; text-align: center; font-family: Sora, 'Segoe UI', system-ui, sans-serif; text-shadow: 0 2px 16px rgba(0,0,0,0.95); } .ds-section-header h2 { margin: 0; color: #fff; font-size: 44px; font-weight: 700; letter-spacing: -0.015em; line-height: 1.12; text-wrap: balance; } .ds-section-header p { margin: 0; max-width: 48ch; color: rgba(255,255,255,0.8); font-size: 20px; line-height: 1.65; text-wrap: pretty; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Liquid Circuit",
+    "overview": "The page is a black void with a living scene behind it: a water-clear orb of fused metaballs, bending the blue traces of a circuit board as it moves. Infrastructure made fluid and touchable. The circuitry is the technical truth, and the liquid is how it responds to you. The owner's brief is that each mouse touch, stroke and movement should make the page feel alive, so the orb is pushed by the cursor and can be dragged around.\n\nContent lives on **frosted glass**. Panels, cards, bands, the header and the footer bar are translucent: they blur the scene behind them and refract the orb as it drifts past, so the page and the scene read as one object. Sections are centred, with a bold headline over a quiet lead, then glass. The system is dark-only, scene-first, and speaks in one typeface, Sora.\n\nMood: futuristic and fluid, confident and polished, technical and precise, animated and interactive. No visual anti-reference has been confirmed. The owner has said this frosted-glass composition is what they prefer; a bare, text-on-void layout was tried and rejected as \"too blank and simple\".",
+    "keyCharacteristics": [
+      "A fixed, full-screen WebGL scene is the real background; the HTML `body` is plain black.",
+      "Content on frosted glass: translucent fill with a soft sheen, backdrop blur, hairline edge, 24px corners.",
+      "Centred sections; panels and cards in wrapping rows; full-bleed glass bands for logos.",
+      "One UI accent, Circuit Glow Blue, against white on black; amber and silver appear only as faint band tints.",
+      "Bold geometric headlines in Sora, left to the scene to supply the colour.",
+      "Every pointer interaction answers back: an edge that brightens, a card that lifts, a colour shift."
+    ],
+    "rules": [
+      {
+        "name": "The Black Canvas Rule",
+        "body": "The page is black, always. The scene provides all atmosphere; no section paints an opaque background over it.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Signal Rule",
+        "body": "Circuit Glow Blue is the only UI accent. Amber and silver are band tints, not accents.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Tone Rule",
+        "body": "Partner and customer logos are shown in one tone (white at 90%), because their brand colours measured 1.05–2.4:1 on black. A logo with overlapping shapes gets a pre-toned asset with layered opacities so its shapes stay distinct.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Family Rule",
+        "body": "One typeface; weight and size carry the hierarchy.",
+        "section": "typography"
+      },
+      {
+        "name": "The Balance Rule",
+        "body": "Headings wrap with `text-wrap: balance`, paragraphs with `pretty`, so no line ends on a lone word. Sora's `ch` unit is wide, so measure is set in `ch` tuned for it (lead 48ch, copy 46ch).",
+        "section": "typography"
+      },
+      {
+        "name": "The Scene-First Rule",
+        "body": "Glass reveals the scene; it never replaces it. Panels are translucent and the orb must read through them.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Halo Rule",
+        "body": "Text over the open scene carries the black halo, because the scene moves behind it.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Flat-Inside Rule",
+        "body": "Controls and tags inside a glass card are flat tints (no blur of their own). Glass never nests inside glass.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** keep the live scene behind every page and forward pointer events to it, so the page always reacts to the cursor.",
+      "**Do** put content on frosted glass panels: translucent sheen fill, backdrop blur, 20% white hairline rising to 40%, 24px corners.",
+      "**Do** make anything pressable a real link or button with a visible focus ring.",
+      "**Do** use Circuit Glow Blue as the only UI accent.",
+      "**Do** show partner and customer logos in one tone, with their names beneath.",
+      "**Do** write copy for both languages together; Italian runs longer, so test its wrapping.",
+      "**Do** honour `prefers-reduced-motion`: no hero animation, instant scrolling, a still scene."
+    ],
+    "donts": [
+      "**Don't** return to bare text on the void as the page's structure. It was tried and rejected as too blank.",
+      "**Don't** nest blurred glass inside glass. Controls inside a card are flat tints.",
+      "**Don't** use the pink-tinted glass; the owner dropped it from the system.",
+      "**Don't** place the logo's charcoal \"FB\" (#4d494a) on the black canvas. Use the reversed lockup (Logo Light).",
+      "**Don't** use opaque panel fills. The scene must show through every surface.",
+      "**Don't** use Unicode glyphs or emoji as icons.",
+      "**Don't** introduce a light theme. The canvas is always black.",
+      "**Don't** add numeric claims, counts or statistics. The owner dropped them."
+    ]
+  }
+}

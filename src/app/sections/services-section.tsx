@@ -1,53 +1,61 @@
-"use client";
+import type { JSX } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { LANDING_TECH_COUNT, SERVICE_IMAGES, SERVICE_SLUGS, SERVICE_TECHNOLOGIES } from "../data/site-data";
+import type { Dictionary } from "../i18n/dictionaries/types";
+import { fmt, serviceHref, type Locale } from "../i18n/locales";
+import { ArrowRightIcon } from "../components/icons";
 
-import {useRef, JSX, useCallback} from "react";
-import ServiceSectionList from "../components/services-section/services-section-list";
-import { SERVICES } from "../data/site-data";
-import {useRouter} from "next/navigation";
+interface ServicesSectionProps {
+  locale: Locale;
+  copy: Dictionary["services"];
+  practices: Dictionary["practices"];
+}
 
-/**
- * Services section.
- */
-export default function ServicesSection(): JSX.Element {
-    const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+export default function ServicesSection({ locale, copy, practices }: ServicesSectionProps): JSX.Element {
+  return (
+    <section id="services" className="section" aria-labelledby="services-title">
+      <div className="container">
+        <header className="section-head">
+          <h2 id="services-title" className="h2">
+            {copy.title}
+          </h2>
+          <p className="lead">{copy.lead}</p>
+        </header>
 
-    function useNavigate() {
-        const router = useRouter();
-        return useCallback((url: string) => router.push(url), [router]);
-    }
-
-    const navigate = useNavigate()
-
-    const handleLearnMore = (slug: string) => {
-        const el = cardRefs.current.get(slug);
-        if (el) {
-            navigate(`/services/${slug}`);
-        }
-    };
-
-    return (
-        <section id="services">
-            <div className="services-container">
-                <div className="services-description">
-                    <h2>Our Services</h2>
-                    <p>Comprehensive IT solutions tailored to your needs</p>
+        <ul className="card-row">
+          {SERVICE_SLUGS.map((slug) => {
+            const practice = practices[slug];
+            return (
+              <li key={slug} className="glass glass-card glass-card-lift service-card">
+                <div className="service-image">
+                  <Image
+                    src={SERVICE_IMAGES[slug]}
+                    alt=""
+                    width={600}
+                    height={500}
+                    sizes="(max-width: 768px) 90vw, 380px"
+                  />
                 </div>
-                <div className="services-grid">
-                    {SERVICES.map((service) => (
-                        <div
-                            key={service.slug}
-                            ref={(el) => {
-                                if (el) cardRefs.current.set(service.slug, el);
-                            }}
-                        >
-                            <ServiceSectionList
-                                services={[service]}
-                                onLearnMore={() => handleLearnMore(service.slug)}
-                            />
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </section>
-    );
+                <h3 className="practice-title">{practice.title}</h3>
+                <p className="practice-summary">{practice.summary}</p>
+                <ul className="tag-list tag-list-center">
+                  {SERVICE_TECHNOLOGIES[slug].slice(0, LANDING_TECH_COUNT).map((tech) => (
+                    <li key={tech} className="tag">
+                      {tech}
+                    </li>
+                  ))}
+                </ul>
+                <Link href={serviceHref(locale, slug)} className="btn-flat">
+                  {copy.learnMore}
+                  <span className="sr-only"> {fmt(copy.learnMoreSr, { practice: practice.title })}</span>
+                  <ArrowRightIcon />
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </section>
+  );
 }
