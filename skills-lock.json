@@ -7,6 +7,12 @@
       "skillPath": "skills/taste-skill/SKILL.md",
       "computedHash": "53590ee9325bee34d7888bf0d81bd3941a108b1e7850df46802d93104e3f2b90"
     },
+    "liquid-glass-claude-skill": {
+      "source": "Armitanemati/liquid-glass-claude-skill",
+      "sourceType": "github",
+      "skillPath": "SKILL.md",
+      "computedHash": "72fa4e4a043314b30b32033fcb873afce053a96c117f48c5f2c6e2318157570b"
+    },
     "motion-design": {
       "source": "LottieFiles/motion-design-skill",
       "sourceType": "github",

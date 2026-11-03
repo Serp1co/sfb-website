@@ -94,6 +94,22 @@ export function CopyIcon(props: IconProps): JSX.Element {
   );
 }
 
+export function PauseIcon(props: IconProps): JSX.Element {
+  return (
+    <svg {...base} {...props}>
+      <path d="M9 6.5v11M15 6.5v11" />
+    </svg>
+  );
+}
+
+export function PlayIcon(props: IconProps): JSX.Element {
+  return (
+    <svg {...base} {...props}>
+      <path d="M8.5 6.2v11.6a.6.6 0 0 0 .92.5l8.7-5.8a.6.6 0 0 0 0-1l-8.7-5.8a.6.6 0 0 0-.92.5Z" />
+    </svg>
+  );
+}
+
 export function CheckIcon(props: IconProps): JSX.Element {
   return (
     <svg {...base} {...props}>

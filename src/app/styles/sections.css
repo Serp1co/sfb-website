@@ -1,19 +1,42 @@
 /* ------------------------------------------------------------------ */
 /*  Page structure: centred sections, content on frosted glass panels. */
-/*  The orb sits fixed at the centre of the viewport; panels blur it   */
-/*  and refract it as it passes behind them.                           */
+/*  The orb moves through the page with the scroll (each [data-story]  */
+/*  section names its pose); panels blur and refract it as it passes   */
+/*  behind them.                                                        */
 /* ------------------------------------------------------------------ */
 
 .container {
   width: min(100%, var(--max));
+  /*
+   * Tailwind v4 also has a .container utility (@layer utilities) with breakpoint max-widths that
+   * capped this one at 640/768/1024px. globals.css no longer generates utilities; this unlayered
+   * value would beat it anyway.
+   */
+  max-width: none;
   margin-inline: auto;
   padding-inline: var(--gutter);
 }
 
+/* No scroll-margin here: html's scroll-padding-top is the one anchor offset (see globals.css). */
 .section {
   position: relative;
-  padding-block: clamp(4rem, 10vh, 6.5rem);
-  scroll-margin-top: 5.5rem;
+  padding-block: var(--section-pad);
+}
+
+/*
+ * The orb's slots (components/orb-slot.tsx), each the first child of its section: a box over the
+ * empty gap from the end of the previous section's content to this section's head. That gap is
+ * the previous section's bottom padding plus this one's top padding, so the box reaches one
+ * padding up out of its section and is two tall; it stays exact only while nothing adds a margin
+ * at either end (the last card row or band, the head). The scene parks the orb in its centre and
+ * sizes it from its height. It paints nothing, takes no pointer, and is out of flow.
+ */
+.orb-slot {
+  position: absolute;
+  inset-inline: 0;
+  top: calc(-1 * var(--section-pad));
+  height: calc(2 * var(--section-pad));
+  pointer-events: none;
 }
 
 /* A faint strip that sets one section apart from its neighbours. No blur: it spans the whole viewport. */
@@ -22,16 +45,91 @@
   border-block: 1px solid var(--hairline-soft);
 }
 
+/*
+ * The head hugs its text (fit-content, centred), so the scrim behind it is centred on the text and
+ * sized from it, and the practice page's head gives the scene the column to keep the orb clear of.
+ */
 .section-head {
+  position: relative;
+  isolation: isolate;
   display: grid;
   justify-items: center;
   gap: var(--s-4);
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: auto;
   margin-bottom: var(--s-8);
   text-align: center;
 }
 
-.centered {
-  text-align: center;
+/* The 404's claim is a bare text block of its own. */
+.hero .h1 {
+  position: relative;
+  isolation: isolate;
+}
+
+/*
+ * Bare text over the open scene keeps the full halo (DESIGN.md, the Halo Rule) and gets a scrim
+ * behind it as well: invisible over black, it only darkens the scene where the orb or the
+ * circuitry crosses the text. It is one soft ellipse inscribed in a box that reaches past the
+ * text, full strength out to half its radius and easing to nothing at its rim (a smootherstep in
+ * eight stops), so no edge shows where the circuitry is bright. A flat core with feathered sides
+ * read as a darker plate, worst behind a claim whose box spans the whole column however short its
+ * balanced lines. The ends of a line that fills its box get less than its middle: the scene
+ * also keeps its own background dark under these blocks (copy anchors, the composite's guard
+ * rects) and the orb holds keep the orb off them, so the scrim is the margin over that, for every
+ * frame before the guard catches up and for the orb crossing behind in a transit. It moves with
+ * the text and needs no state. The landing hero has none: its brand sits over the orb on an
+ * outline of its own (Hero, below).
+ */
+.section-head::before,
+.hero .h1::before {
+  --scrim-ellipse: radial-gradient(
+    closest-side,
+    #000 50%,
+    rgb(0 0 0 / 0.98) 56.25%,
+    rgb(0 0 0 / 0.9) 62.5%,
+    rgb(0 0 0 / 0.72) 68.75%,
+    rgb(0 0 0 / 0.5) 75%,
+    rgb(0 0 0 / 0.28) 81.25%,
+    rgb(0 0 0 / 0.1) 87.5%,
+    rgb(0 0 0 / 0.02) 93.75%,
+    transparent
+  );
+  content: "";
+  position: absolute;
+  inset: calc(-1 * var(--scrim-reach-y)) calc(-1 * var(--scrim-reach-x));
+  z-index: -1;
+  pointer-events: none;
+  background: var(--scrim);
+  -webkit-mask-image: var(--scrim-ellipse);
+  mask-image: var(--scrim-ellipse);
+}
+
+/*
+ * A scrim must stop short of its neighbours: a head is positioned, so it paints above the CSS
+ * glass that follows it, and with WebGL glass every scrim is above the canvas that draws the
+ * panes. The practice pills sit 32px below their head.
+ */
+.detail-block .section-head {
+  --scrim-reach-y: 28px;
+}
+
+/*
+ * The 404's claim. The actions follow 32px below and nothing sits above, so the ellipse reaches
+ * 28px each way, centred on the two lines, and wider sideways: the blue line is the longer one,
+ * at the bottom, and its ends sit near the corners of the box.
+ */
+.hero .h1::before {
+  inset: -28px -30%;
+}
+
+/* Without overflow: clip (Safari before 16) the overlay cannot clip a scrim, so it stays in the column. */
+@supports not (overflow: clip) {
+  .section-head::before,
+  .hero .h1::before {
+    inset-inline: 0;
+  }
 }
 
 /* ------------------------------------------------------------------ */
@@ -41,7 +139,7 @@
 .h1 {
   font-size: clamp(2rem, 4.2vw, 4rem);
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
   line-height: 1.08;
   overflow-wrap: break-word;
 }
@@ -49,7 +147,7 @@
 .h2 {
   font-size: clamp(1.75rem, 3vw, 2.75rem);
   font-weight: 700;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.01em;
 }
 
 .h3 {
@@ -59,14 +157,14 @@
 }
 
 .lead {
-  max-width: 48ch;
+  max-width: 54ch;
   color: var(--mist);
   font-size: clamp(1.0625rem, 0.4vw + 0.95rem, 1.25rem);
   line-height: 1.65;
 }
 
 .copy {
-  max-width: 46ch;
+  max-width: 58ch;
   color: var(--mist);
   line-height: 1.75;
 }
@@ -75,16 +173,36 @@
   text-align: center;
 }
 
+/*
+ * Line reveals (motion/reveals.ts) split a heading or lead into masked line spans while they
+ * play, then restore the markup. The spans must stack as blocks to move and to clip; the mask's
+ * extra 0.1em above and below keeps accents (È, À) and descenders whole during the rise.
+ */
+.split-line,
+.split-line-mask {
+  display: block;
+}
+
+.split-line-mask {
+  padding-block: 0.1em;
+  margin-block: -0.1em;
+}
+
 /* ------------------------------------------------------------------ */
 /*  Hero                                                               */
 /* ------------------------------------------------------------------ */
 
+/*
+ * A viewport-tall stage for the big orb, which the scene centres on this box (orb-slot-hero). The
+ * block padding is even, so the brand's centre is the box's centre and sits on the orb's; 7.5rem
+ * clears the fixed header (76px) with room to spare. The 404 is one of these too.
+ */
 .hero {
   display: grid;
   place-items: center;
   min-height: 100vh;
   min-height: 100svh;
-  padding-block: 7.5rem var(--s-8);
+  padding-block: 7.5rem;
 }
 
 .hero-inner {
@@ -94,13 +212,177 @@
   text-align: center;
 }
 
-.hero-logo {
-  width: auto;
-  max-width: 62%;
-  height: clamp(4rem, 15vh, 8.5rem);
-  filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 1));
+/* The logo over the tagline: one lockup, centred on the orb (hero-brand). */
+.hero-brand {
+  display: grid;
+  justify-items: center;
+  gap: var(--s-5);
 }
 
+/*
+ * Sized by its width, so the lockup keeps its proportions everywhere: a share of the viewport's
+ * height, as the orb behind it is, and never wider than most of the column. Its letters are black
+ * (owner, 2026-11-02 evening), so it stands out from the dark scene and the orb by a crisp white
+ * outline of about 2 px, with no blue glow ("make it a white glow border of about 2px"), the
+ * letters and the cobalt S dark against it, from the first frame (the rise below starts with it)
+ * until the scene draws the same outline itself (below), and whenever the scene is not there (no
+ * WebGL, a renderer failure). blur(0) leads the list so the rise's blur eases into it: from a list
+ * that opens with another function a filter jumps halfway.
+ */
+.hero-logo {
+  /*
+   * The outline's scale, the logo's height, as the composite's (LOGO_BORDER.outline) is: its width
+   * (the clamp below, or 78 % of the column where that is less: on a phone, where the column is
+   * the page less its gutters) x 244 / 601.
+   */
+  --logo-h: calc(min(clamp(13rem, 44vh, 30rem), 0.78 * (100vw - 2 * var(--gutter))) * 0.406);
+  /*
+   * White, all round (no offsets). A drop-shadow cannot spread, but each one blurs all that is
+   * drawn before it, so eight tiny ones chained (the blur is the Gaussian's own sigma here: 0.5 px
+   * at 1440 x 900) grow a line hugging the glyphs: full to 1.5 px off them, three quarters of its
+   * light at 2 px, a quarter at 2.5 px and gone by 3.5 px, where the composite's
+   * (LOGO_BORDER.outline) is full to 2 px and a fifth at 2.5 px: a blur cannot end as crisply as
+   * the composite's line, so this one is softer by about a quarter px.
+   */
+  --logo-outline:
+    drop-shadow(0 0 calc(var(--logo-h) * 0.0031) rgb(255 255 255))
+    drop-shadow(0 0 calc(var(--logo-h) * 0.0031) rgb(255 255 255))
+    drop-shadow(0 0 calc(var(--logo-h) * 0.0031) rgb(255 255 255))
+    drop-shadow(0 0 calc(var(--logo-h) * 0.0031) rgb(255 255 255))
+    drop-shadow(0 0 calc(var(--logo-h) * 0.0031) rgb(255 255 255))
+    drop-shadow(0 0 calc(var(--logo-h) * 0.0031) rgb(255 255 255))
+    drop-shadow(0 0 calc(var(--logo-h) * 0.0031) rgb(255 255 255))
+    drop-shadow(0 0 calc(var(--logo-h) * 0.0031) rgb(255 255 255));
+  width: min(78%, clamp(13rem, 44vh, 30rem));
+  height: auto;
+  filter: blur(0) var(--logo-outline);
+}
+
+/*
+ * The rise starts from the outline (the keyframes below read this), so the black letters stand out
+ * from the first frame instead of growing their outline as they come into focus. Not in forced
+ * colours, where the logo is one tone with no outline (below).
+ */
+@media (forced-colors: none) {
+  .hero-logo {
+    --rise-glow: var(--logo-outline);
+  }
+}
+
+/*
+ * Once the scene draws the logo's own edge (v3.4: the same white outline, under an electric
+ * crackle along it, in either glass mode) it says so on <html>, and the CSS outline,
+ * which would sit over that border and its arcs and wash them out, eases out to the list's leading
+ * blur(0) as the composite's fades in. So the filter is only the first frames' and the no-scene
+ * fallback: without the scene it stays, and it comes back at once if the scene drops out. The ease
+ * is the cubic ease-out the composite fades in on (LOGO_BORDER.fadeInS, 1 - (1 - t)^3), so what
+ * one loses the other gains and the outline never dips during the cross; --ease-out would take the
+ * CSS outline to a seventh in the first 0.16 s, with the composite's only at three fifths.
+ * Forced colours keep their own filter (below).
+ */
+@media (forced-colors: none) {
+  html[data-logo-energy="on"]:not([data-scene="off"]) .hero-logo {
+    filter: blur(0);
+    transition: filter 0.6s cubic-bezier(0.33, 1, 0.68, 1);
+  }
+}
+
+/*
+ * The tagline takes the Headline role (DESIGN.md): the logo above it is the display element. Its
+ * letters are the logo's black in every state, under the pointer too (owner, 2026-11-02 evening:
+ * "make it black"), so the two read as one lockup over the orb with no plate behind them: the
+ * logo's outline, thinner for the text (TAGLINE_BORDER.outlineShare), is what parts each glyph
+ * from the dark scene, the CSS one until the scene draws it (below). One line from 600px; on a
+ * phone each phrase takes a line of its own rather than the three breaking into an uneven two.
+ */
+.hero-tagline {
+  /*
+   * The outline, the logo's white: text-shadows cannot spread and each blurs the glyphs alone, so
+   * fourteen tight ones stacked saturate into a line round every stroke; in em, so it scales with
+   * the text. Full to 1 px off the glyphs at 1440 x 900, nine tenths of its light at 1.5 px, two
+   * thirds at 2 px and a sixth at 3 px, where the composite's (TAGLINE_BORDER.outlineShare) is full
+   * to 2 px and a fifth at 2.5 px: a blur cannot end as crisply, so this one is softer by about half
+   * a px.
+   */
+  --tagline-line: 0 0 0.081em rgb(255 255 255);
+  --tagline-outline:
+    var(--tagline-line),
+    var(--tagline-line),
+    var(--tagline-line),
+    var(--tagline-line),
+    var(--tagline-line),
+    var(--tagline-line),
+    var(--tagline-line),
+    var(--tagline-line),
+    var(--tagline-line),
+    var(--tagline-line),
+    var(--tagline-line),
+    var(--tagline-line),
+    var(--tagline-line),
+    var(--tagline-line);
+  color: var(--brand-black);
+  font-size: clamp(1.75rem, 3vw, 2.75rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.12;
+  text-shadow: var(--tagline-outline);
+}
+
+/*
+ * Once the scene draws the tagline's outline itself (v3.4: the composite traces the rendered text,
+ * the outline at rest and the electric border on top under the pointer) it says so on <html>, and
+ * the CSS outline eases out: a text-shadow paints over the canvas, so it would hide the border it
+ * frames and stack on the composite's outline. Fourteen zero shadows, as many as the list has, not
+ * none: the list keeps its shape, so it interpolates out while the composite's fades in, on the
+ * composite's own fade-in curve (as the logo's hand-over, above), so the two cross without a dip.
+ * The transition is this rule's alone: without the scene, or once it drops out (a lost context, a
+ * rebuild of the tagline's field after a rewrap), the CSS outline is back at once, as the logo's
+ * is, and a hover changes nothing there. Forced colours drop every text-shadow and take the system's text colour; print
+ * drops them too (globals.css), the letters black on paper.
+ */
+html[data-tagline-energy="on"]:not([data-scene="off"]) .hero-tagline {
+  text-shadow:
+    0 0 transparent,
+    0 0 transparent,
+    0 0 transparent,
+    0 0 transparent,
+    0 0 transparent,
+    0 0 transparent,
+    0 0 transparent,
+    0 0 transparent,
+    0 0 transparent,
+    0 0 transparent,
+    0 0 transparent,
+    0 0 transparent,
+    0 0 transparent,
+    0 0 transparent;
+  transition: text-shadow 0.6s cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+/*
+ * The two hand-overs are cross-fades of one outline for another, not motion: reduced motion keeps
+ * them (globals.css cuts every other transition), as it keeps the scene's own fade-in
+ * (components.css). Cut to nothing, the CSS outline would vanish at once while the composite's is
+ * still fading in (LOGO_BORDER.fadeInS, after a client navigation home), and black letters would
+ * blink out over the dark scene.
+ */
+@media (prefers-reduced-motion: reduce) and (forced-colors: none) {
+  html[data-logo-energy="on"]:not([data-scene="off"]) .hero-logo {
+    transition: filter 0.6s cubic-bezier(0.33, 1, 0.68, 1) !important;
+  }
+
+  html[data-tagline-energy="on"]:not([data-scene="off"]) .hero-tagline {
+    transition: text-shadow 0.6s cubic-bezier(0.33, 1, 0.68, 1) !important;
+  }
+}
+
+@media (max-width: 599px) {
+  .tagline-phrase {
+    display: block;
+  }
+}
+
+/* The 404's claim: two lines, the second in blue. */
 .claim-lead {
   display: block;
 }
@@ -111,10 +393,10 @@
   color: var(--blue);
 }
 
-.hero .lead {
-  max-width: 50ch;
-}
-
+/*
+ * The 404's two actions, at least 24px below its claim (the grid gap plus this margin). The orb
+ * settles on this row (hero-actions), glowing up through the buttons.
+ */
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
@@ -123,86 +405,14 @@
   margin-top: var(--s-2);
 }
 
-/* Doors: the three practices as quick links, stack named up front. */
-.doors {
-  width: 100%;
-  max-width: 920px;
-  margin-top: var(--s-6);
-}
-
-.doors ul {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--s-4);
-  list-style: none;
-  padding: 0;
-}
-
-.door {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: var(--s-1) var(--s-3);
-  height: 100%;
-  padding: var(--s-4) var(--s-5);
-  color: var(--white);
-  text-align: left;
-  text-decoration: none;
-}
-
-.door-title {
-  font-size: 1.125rem;
-  font-weight: 700;
-  transition: color 0.3s ease;
-}
-
-.door-tech {
-  grid-column: 1;
-  color: var(--mist);
-  font-size: 0.875rem;
-  line-height: 1.5;
-}
-
-.door .icon {
-  grid-column: 2;
-  grid-row: 1 / span 2;
-  transition: transform 0.3s var(--ease-out);
-}
-
-.door:hover .door-title {
-  color: var(--blue);
-}
-
-.door:hover .icon {
-  transform: translateX(4px);
-}
-
-/* The practices are the next section down on a phone; no need to repeat them. */
-@media (max-width: 899px) {
-  .doors {
-    display: none;
-  }
-}
-
 @media (prefers-reduced-motion: no-preference) {
   .rise {
-    animation: rise 0.9s var(--ease-out) backwards;
+    animation: rise 0.9s var(--ease-out) var(--rise-delay, 0s) backwards;
   }
 
+  /* The tagline follows the logo by a beat. */
   .rise:nth-child(2) {
-    animation-delay: 0.1s;
-  }
-
-  .rise:nth-child(3) {
-    animation-delay: 0.2s;
-  }
-
-  .rise:nth-child(4) {
-    animation-delay: 0.3s;
-  }
-
-  .rise:nth-child(5) {
-    animation-delay: 0.4s;
+    --rise-delay: 0.1s;
   }
 }
 
@@ -213,7 +423,8 @@
 @keyframes rise {
   from {
     transform: translateY(14px);
-    filter: blur(8px);
+    /* The hero logo's outline, where it has one (above): only the blur eases, so the outline is there from the first frame. */
+    filter: blur(8px) var(--rise-glow,);
   }
 }
 
@@ -288,31 +499,109 @@
   padding: 0;
 }
 
-.service-card {
+/*
+ * Each service card stands in a cell (v3.3) that takes the row's share, the card filling it, so
+ * the cell's width is the card's: the container the card's frost layer reads the window's height
+ * from (components.css). The cell isolates, so that layer paints first in it, under all of the card.
+ */
+.service-cell {
+  container-type: inline-size;
+  isolation: isolate;
   display: flex;
   flex: 1 1 300px;
+  max-width: 380px;
+}
+
+.service-card {
+  /* The padding round the window and the photo's proportions: the frost layer's cut follows both. */
+  --card-pad: var(--s-5);
+  --window-w: 6;
+  --window-h: 5;
+  display: flex;
+  flex: 1 1 auto;
   flex-direction: column;
   align-items: center;
   gap: var(--s-4);
-  max-width: 380px;
-  padding: var(--s-5);
+  min-width: 0;
+  padding: var(--card-pad);
   text-align: center;
 }
 
+/* The card's window: the stock photo with CSS glass, the live orb body with WebGL glass. */
 .service-image {
   width: 100%;
   overflow: hidden;
   border: 1px solid var(--hairline-soft);
   border-radius: var(--radius-md);
   background: rgba(0, 6, 92, 0.25);
+  transition: background-color 0.6s ease;
 }
 
 .service-image img {
   width: 100%;
   height: auto;
-  aspect-ratio: 6 / 5;
+  aspect-ratio: var(--window-w) / var(--window-h);
   object-fit: cover;
   opacity: 0.8;
+  transition: opacity 0.6s ease;
+}
+
+/*
+ * WebGL glass: the scene parks this practice's body of the orb right behind the frame and the
+ * composite keeps the frame clear, so the live body is the illustration. The photo and its tile
+ * fade out; the hairline stays to frame the window.
+ */
+html[data-engine="webgl"] .service-image {
+  background-color: transparent;
+}
+
+html[data-engine="webgl"] .service-image img {
+  opacity: 0;
+}
+
+/*
+ * CSS glass (phones and tablets, owner decision 2026-11-01) with the live scene drawn and following
+ * the scroll: since v3 the orb splits into these windows there too, and the photo, stacked over the
+ * body at 0.8, hid it. It fades as on WebGL glass, and the body shows through the window, which the
+ * card's frost leaves out (v3.3), under a faint tint of its own in place of the photo's tile. The
+ * photo stays wherever no live body can be behind it: before the scene shows, as a still frame
+ * (reduced motion, or paused by the visitor), after a renderer failure, and on solid material.
+ */
+html[data-engine="css"]:not([data-scene="off"]):not([data-motion="paused"]):has(
+    .scene-fade[data-reveal="shown"][data-still="false"]
+  )
+  .service-image {
+  background-color: var(--glass-window-tint);
+}
+
+html[data-engine="css"]:not([data-scene="off"]):not([data-motion="paused"]):has(
+    .scene-fade[data-reveal="shown"][data-still="false"]
+  )
+  .service-image
+  img {
+  opacity: 0;
+}
+
+/*
+ * Solid material shows nothing behind it, and forced colours hide the scene: the photo is the
+ * picture. The same selectors as above, so these win by coming later (a negated media query would
+ * be false in a browser that does not know prefers-reduced-transparency, phones included).
+ */
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more), (forced-colors: active) {
+  html[data-engine="css"]:not([data-scene="off"]):not([data-motion="paused"]):has(
+      .scene-fade[data-reveal="shown"][data-still="false"]
+    )
+    .service-image {
+    background-color: rgba(0, 6, 92, 0.25);
+  }
+
+  html[data-engine="css"]:not([data-scene="off"]):not([data-motion="paused"]):has(
+      .scene-fade[data-reveal="shown"][data-still="false"]
+    )
+    .service-image
+    img {
+    opacity: 0.8;
+  }
 }
 
 .practice-title {
@@ -325,10 +614,6 @@
 .practice-summary {
   color: var(--mist);
   line-height: 1.65;
-}
-
-.tag-list-center {
-  justify-content: center;
 }
 
 .service-card .btn-flat {
@@ -380,10 +665,15 @@
   text-decoration-thickness: 2px;
   text-underline-offset: 0.3em;
   overflow-wrap: anywhere;
+  transition:
+    text-decoration-color 0.18s var(--ease-out),
+    text-decoration-thickness 0.18s var(--ease-out);
 }
 
+/* Like .text-link (components.css): the text stays white in every mode, the underline takes the accent. */
 .address-link:hover {
-  color: var(--blue);
+  text-decoration-color: var(--blue);
+  text-decoration-thickness: 3px;
 }
 
 .copy-status {
@@ -416,17 +706,61 @@
   padding-block: var(--s-6);
 }
 
+/*
+ * The tints are re-declared on the glass element (components.css), so they fade with it, over the
+ * dark floor under every CSS glass fill (a lighter one here while the scene moves, below).
+ */
 .logo-band-amber {
-  background: var(--glass-amber);
+  background: linear-gradient(var(--glass-amber), var(--glass-amber)), var(--glass-floor);
 }
 
 .logo-band-silver {
-  background: var(--glass-silver);
+  background: linear-gradient(var(--glass-silver), var(--glass-silver)), var(--glass-floor);
 }
 
+/*
+ * Clearer than every other pane while the scene moves (owner, 2026-11-02): the circuitry behind
+ * the bands reads through them, at half the blur and a lighter dark floor (0.2 of night, not 0.35).
+ * That leans on the choreography, which holds the orb in the gaps above and below the bands and
+ * only glides it past them. Measured on CSS glass (touch, frozen frames), the labels and names keep
+ * 8:1 or better with the orb held in either gap or parked behind the partners band; only the orb
+ * right behind a line, mid-glide, takes them lower, and briefly. A still scene (reduced motion, or
+ * paused by the visitor) can leave the orb behind a band for as long as the page rests there, so
+ * the bands keep the full frost then.
+ *
+ * On that thinner CSS frost the band text also takes the open scene's halo (stronger than the
+ * glass's own text shadow, which it overrides here) and the names lift to mist, as on the WebGL
+ * glass (whose composite caps the glass behind text instead). It leaves the
+ * band as clear and lifts every case: on a phone the names went from 8.5:1 to 11:1 at rest, and
+ * the worst transient (the orb's brightest spot held right behind a name) from 3.2:1 to 4.0:1;
+ * the old full frost measured 3.2:1 there too.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  html:not([data-motion="paused"]) .logo-band {
+    --blur: 10px;
+    --glass-floor: rgb(10 13 28 / calc(0.2 * var(--glass-a)));
+  }
+
+  html:not([data-engine="webgl"]):not([data-motion="paused"]) .logo-band :is(.logo-label, .logo-name) {
+    text-shadow: var(--halo);
+  }
+
+  html:not([data-engine="webgl"]):not([data-motion="paused"]) .logo-name {
+    color: var(--mist);
+  }
+}
+
+/* On a phone every pane takes less blur (Small screens, below); the bands keep the same share. */
+@media (prefers-reduced-motion: no-preference) and (max-width: 719px) {
+  html:not([data-motion="paused"]) .logo-band {
+    --blur: 6px;
+  }
+}
+
+/* White, not mist: a small uppercase label on a band the orb may brighten from behind. */
 .logo-label {
   margin-bottom: var(--s-5);
-  color: var(--mist);
+  color: var(--white);
   font-size: 0.9375rem;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -476,13 +810,6 @@
   font-size: 0.875rem;
 }
 
-.logo-note {
-  margin-top: var(--s-5);
-  color: var(--dim);
-  font-size: 0.9375rem;
-  text-align: center;
-}
-
 /* ------------------------------------------------------------------ */
 /*  Practice pages                                                     */
 /* ------------------------------------------------------------------ */
@@ -495,6 +822,23 @@
   margin-bottom: 0;
 }
 
+/*
+ * Portrait, as the scene counts it (narrower than 760 px, or taller than wide), the title block
+ * spans the column, so the practice's orb sits centred below it instead of beside it, its top edge
+ * 32 px under the text (scene/world/choreography.ts). The hero keeps that stage open, as the space
+ * beside the title does on a wide screen and the landing's hero does for its orb: without it the
+ * orb and its satellites landed on "What we deliver" and the first feature card (measured at 390,
+ * 360 and 768 px wide). The orb there is about a third of the view's height across (0.30-0.33 of
+ * it, the canvas's projection scales with height), so the stage is that plus 32 px above and below
+ * it, less the next block's own top padding (6vh, .detail-block): 33vh + 4rem - 6vh. vh, not svh:
+ * phones size vh to the toolbars-hidden view, where the orb is at its largest.
+ */
+@media (max-width: 759px), (orientation: portrait) {
+  .detail-hero {
+    padding-bottom: calc(27vh + 4rem);
+  }
+}
+
 .back-link {
   margin-bottom: var(--s-2);
 }
@@ -503,20 +847,71 @@
   padding-block: clamp(2.5rem, 6vh, 4rem);
 }
 
+/* A block's head is only its title: the grid or the pills below set the spacing. */
+.detail-block .section-head {
+  margin-bottom: 0;
+}
+
+/*
+ * The feature cards: full rows span the column, and a short last row is centred with its cards as
+ * wide as the rest (owner, 2026-11-02, v3.1), so the circuitry between the cards (cell-links in
+ * scene/world) ends centred on the last card and runs straight on to the call to action. A grid
+ * cannot centre a short last row, so the cards wrap in a centred flex row instead, each one column
+ * wide. The column count is the one the old auto-fit grid chose (as many 280 px columns as fit,
+ * 28 px apart), read from the list's own width; three at most, which --max never exceeds anyway.
+ * Without container queries the list stays that grid: every card in place, a short row left.
+ */
 .feature-grid {
+  --feature-gap: 28px;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 28px;
+  /* min(): below a 280px column (a 400% zoom, a fold phone) the one column shrinks instead of overflowing. */
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+  gap: var(--feature-gap);
   margin-top: var(--s-7);
   list-style: none;
   padding: 0;
 }
 
+@supports (container-type: inline-size) {
+  .feature-grid {
+    container: feature-grid / inline-size;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
 .feature-card {
+  /* How many columns share the row (the container queries below). */
+  --feature-cols: 1;
+  /* One column: the row less its gaps, shared out. */
+  --feature-col: calc((100% - (var(--feature-cols) - 1) * var(--feature-gap)) / var(--feature-cols));
   display: grid;
   align-content: start;
   gap: var(--s-3);
   padding: var(--s-6) 1.75rem;
+  /*
+   * A pixel short, grown back to the column: a basis of exactly one column could round a hair over
+   * and wrap a full row's last card. min-width 0, as the grid's tracks did: a long word never
+   * widens a card past its column.
+   */
+  flex: 1 1 calc(var(--feature-col) - 1px);
+  min-width: 0;
+  max-width: var(--feature-col);
+}
+
+/* Two columns from 2 x 280 px + one gap. */
+@container feature-grid (min-width: 588px) {
+  .feature-card {
+    --feature-cols: 2;
+  }
+}
+
+/* Three from 3 x 280 px + two gaps. */
+@container feature-grid (min-width: 896px) {
+  .feature-card {
+    --feature-cols: 3;
+  }
 }
 
 .feature-card p {
@@ -562,6 +957,18 @@
 }
 
 /* ------------------------------------------------------------------ */
+/*  Text on the WebGL glass                                            */
+/*  The composite caps the glass behind text at a luminance that keeps */
+/*  80% white at 4.6:1 or better; 70% white would fall short, so the   */
+/*  quieter labels lift to mist there.                                  */
+/* ------------------------------------------------------------------ */
+
+html[data-engine="webgl"] .fact-muted,
+html[data-engine="webgl"] .logo-name {
+  color: var(--mist);
+}
+
+/* ------------------------------------------------------------------ */
 /*  Small screens                                                      */
 /* ------------------------------------------------------------------ */
 
@@ -586,5 +993,51 @@
   /* Less blur on a phone: the same frosted look at a fraction of the cost. */
   .glass {
     --blur: 12px;
+  }
+}
+
+/* More contrast: the leads in full white (the scrim behind them darkens too, globals.css). */
+@media (prefers-contrast: more) {
+  .lead {
+    color: var(--white);
+  }
+}
+
+/* System colours: the scene is hidden (components.css), so a scrim would only smudge the text. */
+@media (forced-colors: active) {
+  .section-head::before,
+  .hero .h1::before {
+    display: none;
+  }
+}
+
+/*
+ * Forced colours hide the scene and keep the hero logo's own fills, and its letters are black
+ * (since 2026-11-02 evening): a dark system canvas would swallow them, so the logo is one light
+ * tone there, without its outline (the tagline takes the system's text colour, its shadows
+ * dropped). blur(0) leads, as at rest, so the rise eases into it.
+ */
+@media (forced-colors: active) {
+  .hero-logo {
+    /* The rise starts in the one tone too (its keyframes read this), so only the blur eases. */
+    --rise-glow: brightness(0) invert(1);
+    filter: blur(0) brightness(0) invert(1);
+  }
+}
+
+/*
+ * The one-tone marks are white for the black canvas, and a light system canvas turns them (and the
+ * hero lockup's light tone) invisible: one dark tone there. Last, over .logo-img-toned and the
+ * lockup's light tone above.
+ */
+@media (forced-colors: active) and (prefers-color-scheme: light) {
+  .logo-img,
+  .logo-img-toned {
+    filter: brightness(0);
+  }
+
+  .hero-logo {
+    --rise-glow: brightness(0);
+    filter: blur(0) brightness(0);
   }
 }

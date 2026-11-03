@@ -44,7 +44,7 @@ export default function CopyEmail({ email, labels }: CopyEmailProps): JSX.Elemen
         <a className="address-link" href={`mailto:${email}`}>
           {email}
         </a>
-        <button type="button" className="btn-flat" onClick={copy}>
+        <button type="button" className="btn-flat copy-email-button" onClick={copy}>
           {status === "copied" ? <CheckIcon /> : <CopyIcon />}
           {labels.copy}
         </button>

@@ -30,9 +30,6 @@ export const SERVICE_TECHNOLOGIES: Record<ServiceSlug, string[]> = {
   ],
 };
 
-/** How many technologies a landing-page service card shows. */
-export const LANDING_TECH_COUNT = 4;
-
 /** Card images on the landing page. Decorative: the practice name sits right beside them. */
 export const SERVICE_IMAGES: Record<ServiceSlug, string> = {
   infrastructure: "/services-1.jpg",
@@ -49,15 +46,21 @@ export interface PartnerItem {
   preToned?: boolean;
 }
 
+/**
+ * Red Hat's mono asset keeps the hat band as a grey secondary tone (white at 38%, like evoila's
+ * secondary shapes): the CSS one-tone filter would merge the black band into the white hat.
+ */
+const RED_HAT: PartnerItem = { name: "Red Hat", icon: "/partners/redhat-mono.svg", preToned: true };
+
 export const PARTNERS: PartnerItem[] = [
-  { name: "Red Hat", icon: "/partners/redhat.svg" },
+  RED_HAT,
   { name: "Commvault", icon: "/partners/commvault.svg" },
   { name: "NetApp", icon: "/partners/netapp.svg" },
   { name: "Nutanix", icon: "/partners/nutanix.svg" },
 ];
 
 export const CUSTOMERS: PartnerItem[] = [
-  { name: "Red Hat", icon: "/partners/redhat.svg" },
+  RED_HAT,
   { name: "Engineering", icon: "/partners/engineering.svg" },
   { name: "evoila", icon: "/partners/evoila-mono.svg", preToned: true },
   { name: "Reply", icon: "/partners/reply.svg" },

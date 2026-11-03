@@ -1,4 +1,9 @@
-@import "tailwindcss";
+/*
+ * Tailwind for its preflight and theme only: source(none) stops it scanning the sources for class
+ * names, so it generates no utilities. Words in the TypeScript once produced .container (with
+ * breakpoint max-widths that capped the site's own container), .hidden, .flex and the like.
+ */
+@import "tailwindcss" source(none);
 
 /* ------------------------------------------------------------------ */
 /*  Tokens. Values come from DESIGN.md; change them here, not inline.  */
@@ -10,6 +15,12 @@
   /* Colour: black canvas, white text, one blue signal */
   --void: #000000;
   --white: #ffffff;
+  /*
+   * The hero lockup's black: the logo's F and B (public/sfb-logo.svg) and, since the owner's call
+   * (2026-11-02 evening: "make it black"), the tagline's letters. Over the dark scene it reads only
+   * by the white outline round it (sections.css), never alone.
+   */
+  --brand-black: #050505;
   --mist: rgba(255, 255, 255, 0.8);
   --dim: rgba(255, 255, 255, 0.7);
   --blue: #4488ff;
@@ -17,22 +28,68 @@
   --blue-hover: rgba(68, 136, 255, 0.16);
   --blue-strong: rgba(68, 136, 255, 0.28);
   --blue-strong-hover: rgba(68, 136, 255, 0.42);
+  /*
+   * Electric blue, for the energy only: a panel with a body of the orb inside it lights up (owner,
+   * 2026-11-02), and the composite's hero borders glow with it (v3.4). A lighter, more luminous
+   * sibling of --blue, so the glow reads as energy, not as the accent; the WebGL composite draws
+   * the same hue. Never a text colour.
+   */
+  --electric: #3d9bff;
 
-  /* Glass fills and edges. The panel fill has a soft sheen so it reads as glass even over black. */
-  --glass-fill: linear-gradient(145deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.05) 60%, rgba(255, 255, 255, 0.08));
-  --glass-amber: rgba(255, 174, 0, 0.08);
-  --glass-silver: rgba(204, 204, 204, 0.07);
+  /*
+   * Glass fills and edges. The panel sheen and the band tints are written on the glass
+   * selectors themselves (styles/components.css), because they fade out with --glass-a when the
+   * WebGL glass takes over, and a var() inside a :root token would resolve here, never there.
+   * These two are flat tints for controls that are not glass (the menu button).
+   */
   --glass-white: rgba(255, 255, 255, 0.1);
   --glass-ghost: rgba(255, 255, 255, 0.05);
+  /* Backdrop saturation for every frosted surface: picks up the scene's colour, stays calm. */
+  --glass-saturate: 140%;
   /* The header floats over bright logos as the page scrolls, so its glass is dark, not clear. */
   --glass-bar: rgba(10, 10, 24, 0.58);
   --night: rgba(10, 10, 30, 0.7);
+  /* Thick tier without a blur of its own: the Services menu sits inside the header's glass. */
+  --night-thick: rgba(10, 10, 30, 0.9);
   --hairline: rgba(255, 255, 255, 0.2);
   --hairline-hover: rgba(255, 255, 255, 0.4);
   --hairline-soft: rgba(255, 255, 255, 0.12);
 
-  /* Type: Sora (see layout/fonts.ts) carries the whole hierarchy */
-  --font: var(--font-sora), "Segoe UI", system-ui, sans-serif;
+  /* Solid surfaces for reduced transparency and more contrast: night, opaque, edged to be seen. */
+  --surface-solid: #10121e;
+  --surface-solid-hover: #1a1d2c;
+  --edge-solid: rgba(255, 255, 255, 0.55);
+
+  /*
+   * Scrim behind bare text over the open scene. Over black it is invisible; it darkens the scene
+   * only where the orb or the circuitry passes behind the text. It adds to the halo, never replaces
+   * it. A soft ellipse centred on the text (sections.css), 0.8 at its core: with the orb forced
+   * right behind a two-line claim, its blue line kept 5.5:1, about twice what the scene's guard
+   * alone left it.
+   */
+  --scrim: rgba(0, 4, 16, 0.8);
+  /*
+   * How far the ellipse's box reaches past its text box: sideways by a share of the text's width
+   * (centred copy has nothing beside it), vertically short of whatever follows the text.
+   */
+  --scrim-reach-x: 25%;
+  --scrim-reach-y: 40px;
+
+  /*
+   * Handover from the CSS frost to the WebGL liquid glass. The frost waits 0.25 s, then goes in
+   * 0.5 s: mostly gone before a pane has condensed, because the frost and fills are drawn above the
+   * canvas, and over a condensing WebGL pane they lift it past the text ceiling (a milky phase).
+   * Ease-in still holds the frost while the boot wave approaches, so no surface is left bare.
+   * These are the fallback: at activation the boot sets both on each surface from the wave's
+   * timing there (scene/pipeline/boot-sequence.ts), so the frost leaves each pane as the wave
+   * condenses it, and the panes by the origin are clear for the ring drop at 0.3 s.
+   */
+  --glass-handover: 0.5s;
+  --glass-handover-delay: 0.25s;
+  --glass-handover-ease: cubic-bezier(0.42, 0, 1, 1);
+
+  /* Type: IBM Plex Sans (see layout/fonts.ts) carries the whole hierarchy */
+  --font: var(--font-sans), "Segoe UI", system-ui, sans-serif;
 
   /* Shape */
   --radius-sm: 10px;
@@ -53,9 +110,23 @@
 
   /* Depth */
   --halo: 0 2px 16px rgba(0, 0, 0, 0.95);
+  /*
+   * Text on glass (owner, 2026-11-02, v3.2): the frost already parts it from the scene, so it takes
+   * no halo, only a little depth and lift: a tight contact shadow under each stroke and a soft one
+   * below, far lighter than the bare text's halo. Every text on a glass surface, in both glass
+   * modes (components.css); never a selection, and focus rings are outlines, which it never reaches.
+   */
+  --glass-text-shadow: 0 1px 1px rgb(0 0 0 / 0.55), 0 2px 8px rgb(0 0 0 / 0.35);
   --shadow-rest: 0 4px 15px rgba(0, 0, 0, 0.1);
   --shadow-lift: 0 10px 40px rgba(0, 0, 0, 0.2);
   --sheen: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+
+  /*
+   * Focus: the 2px blue ring at a 3px offset, with the gap between ring and control filled near
+   * black. Two colours: whatever lies behind (bright frost, the orb), the ring meets a dark edge.
+   */
+  --focus-gap: #000814;
+  --focus-gap-shadow: 0 0 0 3px var(--focus-gap);
 
   /* Motion */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -63,19 +134,75 @@
   /* Layout */
   --max: 1240px;
   --gutter: clamp(1.25rem, 4vw, 3rem);
+  /*
+   * A landing section's block padding. One section's bottom and the next one's top make the gap
+   * between two sections, which the orb's slots span exactly (sections.css), so both read this.
+   */
+  --section-pad: clamp(4rem, 10vh, 6.5rem);
+  /* The footer bar's height from 960px, where it is fixed: the bottom scroll inset follows it. */
+  --footer-bar-h: 3.5rem;
 }
 
 /* ------------------------------------------------------------------ */
 /*  Base                                                               */
 /* ------------------------------------------------------------------ */
 
+/*
+ * No scroll-behavior here: a smooth one also animated the browser's scroll restoration on reload
+ * (a flash of the hero, then a slide). The motion runtime passes the behaviour to each in-page
+ * scroll itself (smooth on touch, instant for reduced motion), and Lenis animates the rest.
+ */
 html {
   background: var(--void);
-  scroll-behavior: smooth;
+  /*
+   * The one anchor offset (the fixed header's bottom edge, 76px, plus breathing room). Lenis,
+   * native jumps and Next's navigation scroll all honour it, so nothing else may add one. The only
+   * other inset is the bottom one below, for the fixed footer bar.
+   */
   scroll-padding-top: 6rem;
   scrollbar-color: rgba(255, 255, 255, 0.3) var(--void);
   scrollbar-width: thin;
   -webkit-text-size-adjust: 100%;
+  /*
+   * A tap on a link or button flashes in the palette's blue, like the selection, not the
+   * browser's grey box: on a phone a tap is the click (v3, it also splashes the orb).
+   */
+  -webkit-tap-highlight-color: rgb(68 136 255 / 0.22);
+}
+
+/*
+ * From 960px the footer bar is fixed over the bottom 3.5rem + var(--s-3): native focus scrolling
+ * and scrollIntoView keep their target above it. Lenis and block-start jumps (the anchors) read
+ * only the top padding, so the anchor offset is unchanged.
+ */
+@media (min-width: 960px) {
+  html {
+    scroll-padding-bottom: calc(var(--footer-bar-h) + var(--s-3) + var(--s-4));
+  }
+}
+
+/* A short viewport (a landscape phone, 400% zoom) un-fixes the bars (components.css): no insets. */
+@media (max-height: 30rem) {
+  html {
+    scroll-padding-top: var(--s-4);
+    scroll-padding-bottom: 0;
+  }
+}
+
+/* Lenis animates the scroll itself; a native smooth scroll underneath would fight it. */
+html.lenis {
+  scroll-behavior: auto;
+}
+
+/* Dragging the camera around the orb: no text selection, one cursor everywhere it passes. */
+html.is-dragging {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+html.is-dragging,
+html.is-dragging * {
+  cursor: grabbing;
 }
 
 body {
@@ -128,10 +255,22 @@ svg {
 :focus-visible {
   outline: 2px solid var(--blue);
   outline-offset: 3px;
+  /* Fills the 3px gap (glass and buttons add it to their own shadows in components.css). */
+  box-shadow: var(--focus-gap-shadow);
 }
 
 :focus:not(:focus-visible) {
   outline: none;
+}
+
+/*
+ * Programmatic focus targets (an in-page link's section, <main> from the skip link, a new page's
+ * h1 after a client navigation) are reading positions, not controls: Chrome counts the move as
+ * :focus-visible and would rule a stray full-width line under the header.
+ */
+[tabindex="-1"]:focus-visible {
+  outline: none;
+  box-shadow: none;
 }
 
 .sr-only {
@@ -167,15 +306,196 @@ svg {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/*
+ * Preferences that ask for less see-through material get solid surfaces with visible edges
+ * (styles/components.css swaps the glass fills). The tokens shared with flat controls and the
+ * bars change here, once.
+ */
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  :root {
+    --glass-bar: var(--surface-solid);
+    --night: var(--surface-solid);
+    --night-thick: var(--surface-solid);
+    --hairline: var(--edge-solid);
+    --hairline-hover: var(--white);
+    --hairline-soft: var(--edge-solid);
+  }
+}
+
+/* More contrast also lifts the quieter text, strengthens every edge and darkens the scrim. */
+@media (prefers-contrast: more) {
+  :root {
+    --mist: rgba(255, 255, 255, 0.92);
+    --dim: rgba(255, 255, 255, 0.88);
+    --edge-solid: rgba(255, 255, 255, 0.8);
+    --scrim: rgba(0, 4, 16, 0.94);
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/*  Print: dark ink on white paper, the content only. !important wins  */
+/*  over the component rules loaded after this file and over GSAP's    */
+/*  inline start states (both of normal importance).                   */
+/* ------------------------------------------------------------------ */
+
+@media print {
+  :root {
+    color-scheme: light;
+    /* The sections' padding (and with it the orb slots, which draw nothing) tightens on paper. */
+    --section-pad: var(--s-6);
+    /* The palette's white text becomes ink; the one accent darkens to read on paper (5.7:1). */
+    --white: #000;
+    --mist: #1f1f1f;
+    --dim: #3d3d3d;
+    --blue: #1f5fd6;
+    --hairline: #9a9a9a;
+    --hairline-hover: #9a9a9a;
+    --hairline-soft: #c4c4c4;
+  }
+
+  html,
+  body {
+    background: #fff;
+    color: #000;
+  }
+
+  /* The halo, shadows and frost belong to the moving scene. */
+  *,
+  *::before,
+  *::after {
+    text-shadow: none !important;
+    box-shadow: none !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+
+  /* What does nothing on paper: the scene, the skip link, navigation, menus, the pause control, the pills' beads. */
+  .scene,
+  .skip-link,
+  .nav,
+  .header-actions,
+  .mobile-menu,
+  .motion-toggle,
+  .copy-email-button,
+  .copy-status,
+  .pill-bead {
+    display: none !important;
+  }
+
+  /* With its bead gone (it frames a droplet of the scene), a pill's label recentres. */
+  .glass-pill {
+    --pill-bead: 0px !important;
+    --pill-lead: 1.5rem !important;
+  }
+
+  /* The bars print once, where they stand in the page. */
+  .site-header,
+  .site-footer {
+    position: static !important;
+  }
+
+  /*
+   * Every surface drops its fill (with "Background graphics" on, the dark tints would hide the
+   * ink) and keeps its edge as a hairline. The scrims behind bare text would print as grey clouds.
+   */
+  .glass,
+  .btn,
+  .btn-flat,
+  .section-band,
+  .service-image,
+  [data-glass] {
+    background: none !important;
+  }
+
+  .glass,
+  [data-glass] {
+    border: 1px solid var(--hairline) !important;
+  }
+
+  .glass-band {
+    border-inline: 0 !important;
+  }
+
+  /* A service card's frost layer (v3.3) is a fill too. */
+  .section-head::before,
+  .hero .h1::before,
+  .service-card::before {
+    display: none !important;
+  }
+
+  /* One-tone marks are white for the black canvas: black on paper. */
+  .logo-img,
+  .logo-img-toned,
+  .header-logo img,
+  .hero-logo {
+    filter: brightness(0) !important;
+  }
+
+  /* On screen the hero is a viewport-tall stage; on paper it is the first block of the page. */
+  .hero {
+    min-height: 0 !important;
+    padding-block: var(--s-6) !important;
+  }
+
+  /* .section follows --section-pad, set above. */
+  .detail-hero,
+  .detail-block {
+    padding-block: var(--s-6) !important;
+  }
+
+  .rise {
+    animation: none !important;
+  }
+
+  /*
+   * Reveals that have not played (printing before scrolling) keep GSAP's inline start states:
+   * opacity 0, an offset, a blur, SplitText lines clipped by their mask. Only the three reveal
+   * kinds: the scene's .scene-fade[data-reveal] wrapper is not content.
+   */
+  :is([data-reveal="lines"], [data-reveal="block"], [data-reveal="items"]),
+  :is([data-reveal="lines"], [data-reveal="block"], [data-reveal="items"]) *,
+  [data-glass] > *,
+  .split-line {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+
+  .split-line-mask {
+    overflow: visible !important;
+  }
+
+  /* Where the external links lead (the screen-only "opens in a new tab" stays unprinted). */
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-weight: 400;
+    overflow-wrap: anywhere;
+  }
+
+  .btn {
+    white-space: normal !important;
+  }
+
+  /* Keep cards, panels and heads whole; a heading (a section's head) stays with what follows it. */
+  .glass,
+  [data-glass],
+  .section-head {
+    break-inside: avoid;
+  }
+
+  h1,
+  h2,
+  h3,
+  .section-head {
+    break-after: avoid;
   }
 }

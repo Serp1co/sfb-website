@@ -14,6 +14,8 @@ const it: Dictionary = {
   },
   common: {
     newTab: "si apre in una nuova scheda",
+    // Draft, for the owner's review.
+    motion: { pause: "Ferma animazione", play: "Avvia animazione" },
   },
   header: {
     homeAria: "SFB S.R.L., home",
@@ -32,11 +34,8 @@ const it: Dictionary = {
     },
   },
   hero: {
-    claimLead: "Infrastruttura, sviluppo e sicurezza.",
-    claimEmphasis: "Un solo team, nessun passaggio di consegne.",
-    lead: "Società di consulenza IT di Roma con solida esperienza open source. Lo stesso team progetta, realizza e protegge i sistemi su cui si regge la tua organizzazione.",
-    primaryCta: "Contattaci",
-    secondaryCta: "Scopri i servizi",
+    // Draft, for the owner's review: the English line, phrase for phrase.
+    tagline: ["Infrastruttura.", "Sviluppo.", "Sicurezza."],
   },
   about: {
     title: "Chi siamo",
@@ -70,7 +69,6 @@ const it: Dictionary = {
     lead: "I vendor con cui collaboriamo e le organizzazioni per cui lavoriamo.",
     partnersLabel: "Partner tecnologici",
     customersLabel: "Clienti",
-    sharedNote: "Red Hat è sia partner sia cliente.",
   },
   contact: {
     title: "Contatti",
@@ -101,7 +99,7 @@ const it: Dictionary = {
   practices: {
     infrastructure: {
       title: "Infrastruttura",
-      summary: "Solida esperienza nella gestione e nell’orchestrazione delle infrastrutture con soluzioni cloud-native.",
+      summary: "Progettiamo, automatizziamo e gestiamo piattaforme cloud-native, dai cluster OpenShift e Kubernetes a storage, backup e monitoraggio.",
       heroSubtitle: "Soluzioni cloud-native e orchestrazione",
       detailedDescription:
         "Progettiamo, distribuiamo e gestiamo infrastrutture resilienti che crescono con il tuo business. Dai data center on-premise agli ambienti hybrid cloud, il nostro team porta una profonda esperienza in orchestrazione di container, automazione e osservabilità per mantenere i sistemi al massimo delle prestazioni.",
@@ -155,7 +153,7 @@ const it: Dictionary = {
     },
     development: {
       title: "Sviluppo",
-      summary: "Applicazioni performanti, distribuite, robuste e manutenibili, realizzate con tecnologie moderne.",
+      summary: "Sviluppiamo software distribuito e manutenibile, dai servizi Quarkus e dagli stream di eventi Kafka alle API e al rilascio automatizzato.",
       heroSubtitle: "Applicazioni moderne, distribuite e manutenibili",
       detailedDescription:
         "Costruiamo software che dura. La nostra area di sviluppo unisce ecosistemi Java enterprise, pattern reattivi moderni, architetture event-driven e rigore ingegneristico per realizzare applicazioni veloci, affidabili e piacevoli da mantenere.",
@@ -199,7 +197,7 @@ const it: Dictionary = {
     },
     security: {
       title: "Sicurezza",
-      summary: "Consulenza sulla sicurezza a tutto tondo, dall’architettura dei sistemi alla sicurezza applicativa.",
+      summary: "Proteggiamo identità, applicazioni e piattaforme, dal single sign-on con Keycloak e SPID/CIE alla sicurezza dei container e alla conformità.",
       heroSubtitle: "Consulenza sulla sicurezza end-to-end",
       detailedDescription:
         "La sicurezza non è un ripensamento: è integrata in ogni livello di ciò che costruiamo. Dalla gestione delle identità e del controllo degli accessi all’hardening delle piattaforme container, dai framework di conformità al threat modelling specifico per l’AI, offriamo una consulenza di sicurezza completa che protegge la tua organizzazione senza rallentarla.",

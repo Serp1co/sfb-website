@@ -9,6 +9,7 @@ const en: Dictionary = {
   },
   common: {
     newTab: "opens in a new tab",
+    motion: { pause: "Pause animation", play: "Play animation" },
   },
   header: {
     homeAria: "SFB S.R.L., home",
@@ -27,11 +28,7 @@ const en: Dictionary = {
     },
   },
   hero: {
-    claimLead: "Infrastructure, development and security.",
-    claimEmphasis: "One team, no hand-offs.",
-    lead: "An IT consultancy in Rome with deep open-source expertise. The same team designs, builds and secures what you run.",
-    primaryCta: "Contact us",
-    secondaryCta: "See services",
+    tagline: ["Infrastructure.", "Development.", "Security."],
   },
   about: {
     title: "About SFB",
@@ -65,7 +62,6 @@ const en: Dictionary = {
     lead: "The vendors we work with, and the organisations we work for.",
     partnersLabel: "Technology partners",
     customersLabel: "Customers",
-    sharedNote: "Red Hat is both a partner and a customer.",
   },
   contact: {
     title: "Get in touch",
@@ -96,7 +92,7 @@ const en: Dictionary = {
   practices: {
     infrastructure: {
       title: "Infrastructure",
-      summary: "Solid expertise in managing and orchestrating your infrastructures with cloud-native solutions.",
+      summary: "We design, automate and operate cloud-native platforms, from OpenShift and Kubernetes clusters to storage, backup and monitoring.",
       heroSubtitle: "Cloud-Native Solutions & Orchestration",
       detailedDescription:
         "We design, deploy, and manage resilient infrastructure that scales with your business. From on-premise data centers to hybrid-cloud environments, our team brings deep expertise in container orchestration, automation, and observability to keep your systems running at peak performance.",
@@ -150,7 +146,7 @@ const en: Dictionary = {
     },
     development: {
       title: "Development",
-      summary: "Performant, distributed, robust and maintainable applications built with modern technologies.",
+      summary: "We build distributed, maintainable software, from Quarkus services and Kafka event streams to APIs and automated delivery.",
       heroSubtitle: "Modern, Distributed & Maintainable Applications",
       detailedDescription:
         "We build software that lasts. Our development practice combines enterprise-grade Java ecosystems with modern reactive patterns, event-driven architectures, and rigorous engineering discipline to deliver applications that are fast, reliable, and a joy to maintain.",
@@ -194,7 +190,7 @@ const en: Dictionary = {
     },
     security: {
       title: "Security",
-      summary: "Security consultancy at every level, from system architecture to application security.",
+      summary: "We secure identities, applications and platforms, from Keycloak single sign-on and SPID/CIE to container security and compliance.",
       heroSubtitle: "End-to-End Security Consultancy",
       detailedDescription:
         "Security is not an afterthought — it’s woven into every layer of what we build. From identity management and access control to container platform hardening, compliance frameworks, and AI-specific threat modelling, we provide holistic security consulting that protects your organization without slowing it down.",

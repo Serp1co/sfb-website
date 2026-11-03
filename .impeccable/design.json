@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-01T20:02:54.684Z",
+  "generatedAt": "2026-11-03T00:00:00.000Z",
   "title": "Design System: SFB S.R.L.",
   "extensions": {
     "colorMeta": {
@@ -108,16 +108,91 @@
           "#cbc8c9",
           "#efeeee"
         ]
+      },
+      "electric-blue": {
+        "role": "secondary",
+        "displayName": "Electric Blue",
+        "canonical": "oklch(67.0% 0.170 253.0)",
+        "tonalRamp": [
+          "#00102a",
+          "#002a5e",
+          "#014a96",
+          "#0c6bd0",
+          "#3d9bff",
+          "#73b6ff",
+          "#aad1ff",
+          "#e3efff"
+        ]
+      },
+      "energy-rim": {
+        "role": "secondary",
+        "displayName": "Energy Rim",
+        "canonical": "oklch(85.6% 0.072 237.0)",
+        "tonalRamp": [
+          "#06101a",
+          "#152839",
+          "#28465e",
+          "#3d6684",
+          "#5689ab",
+          "#79add0",
+          "#a8d8ff",
+          "#e6f4ff"
+        ]
+      },
+      "night-glass": {
+        "role": "neutral",
+        "displayName": "Night Glass",
+        "canonical": "oklch(16.6% 0.027 272.0)",
+        "tonalRamp": [
+          "#0a0d1c",
+          "#1d2236",
+          "#343a52",
+          "#4d5470",
+          "#69708e",
+          "#8890ac",
+          "#aab0c8",
+          "#e9ebf3"
+        ]
+      },
+      "lockup-black": {
+        "role": "neutral",
+        "displayName": "Lockup Black",
+        "canonical": "oklch(11.5% 0.000 0.0)",
+        "tonalRamp": [
+          "#050505",
+          "#1c1c1c",
+          "#3a3a3a",
+          "#5a5a5a",
+          "#7c7c7c",
+          "#a0a0a0",
+          "#c6c6c6",
+          "#ededed"
+        ]
+      },
+      "pulse-cyan": {
+        "role": "secondary",
+        "displayName": "Pulse Cyan",
+        "canonical": "oklch(89.1% 0.079 219.6)",
+        "tonalRamp": [
+          "#03141a",
+          "#0c2c36",
+          "#174b5a",
+          "#256d82",
+          "#3893ad",
+          "#5fbcd8",
+          "#9fe8ff",
+          "#e4f9ff"
+        ]
       }
     },
     "typographyMeta": {
       "display": {
         "displayName": "Display",
-        "purpose": "Hero claim and practice-page titles."
+        "purpose": "The 404's claim and practice-page titles."
       },
       "headline": {
         "displayName": "Headline",
-        "purpose": "Section titles."
+        "purpose": "Section titles and the hero tagline."
       },
       "card-title": {
         "displayName": "Card title",
@@ -141,7 +216,7 @@
       },
       "small": {
         "displayName": "Small",
-        "purpose": "Tags, menu items, door stacks, footer text."
+        "purpose": "Menu items, footer text, the pause control."
       },
       "caption": {
         "displayName": "Caption",
@@ -153,7 +228,7 @@
       },
       "tag": {
         "displayName": "Tag",
-        "purpose": "Technology tags and pills."
+        "purpose": "The technology pills on practice pages."
       }
     },
     "shadows": [
@@ -170,7 +245,27 @@
       {
         "name": "text-halo",
         "value": "0 2px 16px rgba(0, 0, 0, 0.95)",
-        "purpose": "Legibility halo for text over the open scene; set once on body, reset to none on glass."
+        "purpose": "Legibility halo for text over the open scene; set once on body. Text on glass takes glass-text-shadow instead (the logo bands' thin CSS frost keeps this halo)."
+      },
+      {
+        "name": "glass-text-shadow",
+        "value": "0 1px 1px rgb(0 0 0 / 0.55), 0 2px 8px rgb(0 0 0 / 0.35)",
+        "purpose": "Every text on a glass surface, both glass modes (owner, 2026-11-02, v3.2): a tight contact shadow and a soft lift for depth, far lighter than the halo; never on a selection or focus ring."
+      },
+      {
+        "name": "lockup-outline-logo",
+        "value": "drop-shadow(0 0 calc(var(--logo-h) * 0.0093) #9fe8ff) x4, drop-shadow(0 0 calc(var(--logo-h) * 0.031) rgb(159 232 255 / 0.6))",
+        "purpose": "The hero logo's black letters over the dark scene (owner, 2026-11-02 evening): a crisp Pulse Cyan line with a little glow. From the first frame until the composite draws the same outline (html[data-logo-energy=on], 0.6s cubic ease-out cross-fade), and the no-scene fallback."
+      },
+      {
+        "name": "lockup-outline-tagline",
+        "value": "0 0 0.081em #9fe8ff x8, 0 0 0.185em rgb(159 232 255 / 0.8)",
+        "purpose": "The hero tagline's black letters, the logo's outline thinner for the text; eased out once the composite draws it (html[data-tagline-energy=on]), back at once if the scene drops out."
+      },
+      {
+        "name": "lockup-outline-composite",
+        "value": "outside each glyph's distance field: #9fe8ff line at full light, 1.4% of the logo's height (2.25px at 1440x900) or 3.6% of the tagline's line height (1.75px); glow 0.55 at the line, falling over 1.25 line widths; no dark rim",
+        "purpose": "The scene's own lockup outline, in both glass modes; the legibility of the black letters and the blue S."
       },
       {
         "name": "hairline-border",
@@ -181,13 +276,33 @@
         "name": "glass-sheen",
         "value": "linear-gradient(145deg, rgba(255,255,255,0.14), rgba(255,255,255,0.05) 60%, rgba(255,255,255,0.08))",
         "purpose": "Panel fill: reads as glass even over pure black."
+      },
+      {
+        "name": "glass-floor",
+        "value": "rgb(10 13 28 / 0.35)",
+        "purpose": "Dark floor under every CSS glass fill (0.2 on the logo bands while the scene moves)."
+      },
+      {
+        "name": "energized-css",
+        "value": "0 0 0 1px color-mix(in srgb, #3d9bff 35%, transparent), 0 0 22px 2px color-mix(in srgb, #3d9bff 45%, transparent), 0 0 64px 8px color-mix(in srgb, #3d9bff 14%, transparent), inset 0 0 26px color-mix(in srgb, #3d9bff 16%, transparent)",
+        "purpose": "CSS glass cell with a body of the orb inside (data-energized); border Electric Blue. The two outer glows are the no-scene fallback: once the scene shows they ease to zero and the composite draws the outer light."
+      },
+      {
+        "name": "energized-webgl",
+        "value": "rim #a8d8ff up to 2.2x; hairline #3d9bff at 0.8; outer glow 0.5 at the edge, 8px falloff; inner glow 0.22 over 10px, leaning toward the body",
+        "purpose": "The composite's glow on an occupied pane; under CSS glass it draws only the outer glow and the electricity, in a thin band beyond the edge."
+      },
+      {
+        "name": "focus-gap",
+        "value": "0 0 0 3px #000814",
+        "purpose": "Fills the gap between the 2px blue focus ring and its control."
       }
     ],
     "motion": [
       {
         "name": "ease-out",
         "value": "cubic-bezier(0.16, 1, 0.3, 1)",
-        "purpose": "Exponential ease-out for lifts, the nav underline and the hero focus pull."
+        "purpose": "Exponential ease-out for lifts, the nav underline, the energized glow rising and the hero rise."
       },
       {
         "name": "glass-transition",
@@ -197,17 +312,107 @@
       {
         "name": "card-lift",
         "value": "translateY(-4px) over 0.4s ease-out",
-        "purpose": "Service, feature and door cards on hover (pointer devices only)."
+        "purpose": "CSS glass service and feature cards on hover (pointer devices only); a lit card does not lift, its hotter edge is the cue."
       },
       {
         "name": "hero-rise",
-        "value": "0.9s ease-out: translateY(14px) and blur(8px) to rest, staggered 0.1s",
-        "purpose": "The one authored entrance. Painted from the first frame (no opacity fade) so it does not delay LCP; off with reduced motion."
+        "value": "0.9s ease-out: translateY(14px) and blur(8px) to rest, the tagline 0.1s after the logo",
+        "purpose": "The one CSS entrance, painted from the first frame so it does not delay LCP; off with reduced motion."
+      },
+      {
+        "name": "reveal-lines",
+        "value": "GSAP SplitText, rise 120% and blur(6px), 1s expo.out, 0.07s per line",
+        "purpose": "Section heads as they enter."
+      },
+      {
+        "name": "reveal-block",
+        "value": "28px and blur(8px), 0.9s expo.out; items 36px, 0.08s stagger",
+        "purpose": "Content blocks and item rows as they enter; glass panes condense with them."
+      },
+      {
+        "name": "smooth-scroll",
+        "value": "Lenis lerp 0.1; anchor jumps 0.6s + distance / 4000px/s, clamped 0.7-1.5s",
+        "purpose": "The scroll the story and the slosh follow."
+      },
+      {
+        "name": "page-exit",
+        "value": "0.12s power2.in, 8px up; the new page's panes condense from 0.25 with a drop",
+        "purpose": "A link that changes page."
+      },
+      {
+        "name": "glass-handover",
+        "value": "0.5s cubic-bezier(0.42, 0, 1, 1) after 0.25s (fallback); per pane from the boot wave at 1000px/s",
+        "purpose": "CSS frost leaving as the WebGL glass condenses."
+      },
+      {
+        "name": "energy",
+        "value": "up 0.3s, down 0.6s (critically damped); on at 0.6, off at 0.4",
+        "purpose": "A panel's energy from the body inside it."
+      },
+      {
+        "name": "electricity",
+        "value": "arcs crawl 140px/s, reshape 14Hz, flicker 24Hz; sparks 2.2Hz per 70px of outline",
+        "purpose": "Border crackle on a lit cell under the pointer, with keyboard focus inside it, or on touch the lit panel nearest the viewport centre (32px switch margin); under CSS glass the composite draws it just beyond the edge; none when paused or with reduced motion."
+      },
+      {
+        "name": "ripple",
+        "value": "120 steps/s, ~1.2s fade, 24px absorbing walls (0.45 Np): one clear bounce, a faint second",
+        "purpose": "Water on the glass."
+      },
+      {
+        "name": "slosh",
+        "value": "0.85s period, damping ratio 0.35, settled in 1.6s",
+        "purpose": "Scroll flicks rock the liquid."
+      },
+      {
+        "name": "press-swell",
+        "value": "splash speed 17 within 2.6 units; cluster swell +35%, tau 0.3s",
+        "purpose": "A click on the orb, or a tap on touch. A body inside a panel stays inside it (soft wall from 18px out, 6px clear of the edge)."
       },
       {
         "name": "scene-still",
-        "value": "scene settles hidden for 6s, then fades in over 0.8s",
+        "value": "scene settles hidden, then fades in over 0.8s",
         "purpose": "Reduced motion: the visitor sees only the finished orb."
+      },
+      {
+        "name": "section-transition",
+        "value": "0.8s ease-in-out on the scene clock, triggered when the section crossing the viewport centre changes (5% hysteresis); rest about 1s after the trigger; reversals retarget from where the move is",
+        "purpose": "Bodies and camera moving from one section's anchors to the next; never scrubbed by the scroll; reduced motion snaps."
+      },
+      {
+        "name": "slot-glide",
+        "value": "0.8s ease-in-out with the depth dive (as a section move), the liquid carried with it; landed about 1s after the trigger; traces morph corner by corner from the A to the B routing",
+        "purpose": "The Partners orb between slots A and B, riding its junction point all the way."
+      },
+      {
+        "name": "droplet-wobble",
+        "value": "6% swell, periods 2.3s and 3.1s; a press adds 22% at a 0.32s period, tau 0.45s",
+        "purpose": "The technology pills' droplets."
+      },
+      {
+        "name": "logo-border",
+        "value": "always on while visible: 1.25px #a8d8ff hairline, glow 0.7 and crackle 0.8 of a charged one, runs cross-fading every 0.8s, small arcs popping in and out; fades in over 0.6s once the rise ends; static when paused or with reduced motion",
+        "purpose": "The hero logo's electric border at rest (v3.4)."
+      },
+      {
+        "name": "logo-charge",
+        "value": "pointer within 24px of the silhouette: builds 0.35s, decays 0.4s, light = charge squared; glow to 1.1x, outline +25%; bolts re-made every 50-90ms (4 across the gaps, 3 into the orb, 4 streamers) with sparks; a bigger bolt and bloom every 0.8-1.9s at full charge",
+        "purpose": "The hero logo's discharge under the pointer (v3.3); a partner or customer mark the same, scaled, within 10px of its silhouette."
+      },
+      {
+        "name": "logo-thunder",
+        "value": "click or tap: 14 branching bolts spawned over 0.12s, each growing outward over 60-120ms to 1.5-3x the logo's half-size, flickering and fading over 0.45-0.72s; 48 sparks flung outward; a full ripple drop in the orb; 0.85s in all; retriggers; no flash",
+        "purpose": "The hero logo's thunder (v3.4; owner, 2026-11-02 evening: no flash)."
+      },
+      {
+        "name": "tagline-charge",
+        "value": "pointer within 12px of the glyphs: builds 0.22s, goes 0.3s; hairline 0.75px at 0.8, glow swell (3px falloff), crawling crackle; no sparks, no arcs",
+        "purpose": "The hero tagline's electric border on hover; the letters stay black (owner, 2026-11-02 evening)."
+      },
+      {
+        "name": "mark-burst",
+        "value": "a click or tap on a partner or customer mark: full charge at once, more bolts, a shower of sparks and a bloom, dying over 0.45s; its node flashes past full flare",
+        "purpose": "The partner and customer logos' burst (v3.3)."
       }
     ],
     "breakpoints": [
@@ -216,12 +421,20 @@
         "value": "480px"
       },
       {
+        "name": "tagline-one-line",
+        "value": "600px"
+      },
+      {
         "name": "light-blur",
         "value": "720px"
       },
       {
-        "name": "doors",
-        "value": "900px"
+        "name": "portrait-pullback",
+        "value": "760px"
+      },
+      {
+        "name": "performance-tier",
+        "value": "768px"
       },
       {
         "name": "nav-and-footer",
@@ -244,15 +457,23 @@
       "refersTo": "glass-card",
       "description": "A frosted panel: soft sheen fill, 20px blur, hairline edge, inner top highlight, lift shadow. Lifts 4px on hover.",
       "html": "<article class=\"ds-card\"><h3>Our mission</h3><p>We help organisations transform and thrive in a fast-moving digital landscape.</p></article>",
-      "css": ".ds-card { background: linear-gradient(145deg, rgba(255,255,255,0.14), rgba(255,255,255,0.05) 60%, rgba(255,255,255,0.08)); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.2); border-radius: 24px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 40px rgba(0,0,0,0.2); color: #fff; font-family: Sora, 'Segoe UI', system-ui, sans-serif; max-width: 420px; padding: 32px; transition: border-color 0.3s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1); } .ds-card h3 { margin: 0 0 16px; font-size: 20px; font-weight: 700; } .ds-card p { margin: 0; color: rgba(255,255,255,0.8); font-size: 18px; line-height: 1.8; } .ds-card:hover { border-color: rgba(255,255,255,0.4); transform: translateY(-4px); }"
+      "css": ".ds-card { background: linear-gradient(145deg, rgba(255,255,255,0.14), rgba(255,255,255,0.05) 60%, rgba(255,255,255,0.08)); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.2); border-radius: 24px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 40px rgba(0,0,0,0.2); color: #fff; font-family: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif; max-width: 420px; padding: 32px; transition: border-color 0.3s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1);  text-shadow: 0 1px 1px rgb(0 0 0 / 0.55), 0 2px 8px rgb(0 0 0 / 0.35); } .ds-card h3 { margin: 0 0 16px; font-size: 20px; font-weight: 700; } .ds-card p { margin: 0; color: rgba(255,255,255,0.8); font-size: 18px; line-height: 1.8; } .ds-card:hover { border-color: rgba(255,255,255,0.4); transform: translateY(-4px); }"
+    },
+    {
+      "name": "Energized Cell",
+      "kind": "card",
+      "refersTo": "glass-card-energized",
+      "description": "A glass panel with a body of the orb inside it, on every page (feature cards, the call to action and the technology pills too): Electric Blue border and glow (CSS glass shown; the composite adds the outer glow and crawling arcs under the pointer, keyboard focus or the touch reading).",
+      "html": "<article class=\"ds-cell\" data-energized=\"true\"><h3>Our mission</h3><p>We help organisations transform and thrive in a fast-moving digital landscape.</p></article>",
+      "css": ".ds-cell { background: linear-gradient(145deg, rgba(255,255,255,0.14), rgba(255,255,255,0.05) 60%, rgba(255,255,255,0.08)), rgba(10,13,28,0.35); -webkit-backdrop-filter: blur(20px) saturate(140%); backdrop-filter: blur(20px) saturate(140%); border: 1px solid #3d9bff; border-radius: 24px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 40px rgba(0,0,0,0.2), 0 0 0 1px rgba(61,155,255,0.35), 0 0 22px 2px rgba(61,155,255,0.45), 0 0 64px 8px rgba(61,155,255,0.14), inset 0 0 26px rgba(61,155,255,0.16); color: #fff; font-family: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif; max-width: 420px; padding: 32px; transition: border-color 0.3s cubic-bezier(0.16,1,0.3,1), box-shadow 0.3s cubic-bezier(0.16,1,0.3,1);  text-shadow: 0 1px 1px rgb(0 0 0 / 0.55), 0 2px 8px rgb(0 0 0 / 0.35); } .ds-cell h3 { margin: 0 0 16px; font-size: 20px; font-weight: 700; } .ds-cell p { margin: 0; color: rgba(255,255,255,0.8); font-size: 18px; line-height: 1.8; } .ds-cell:hover { border-color: #9ecdff; box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 40px rgba(0,0,0,0.2), 0 0 0 1px rgba(61,155,255,0.55), 0 0 28px 4px rgba(61,155,255,0.58), 0 0 72px 10px rgba(61,155,255,0.2), inset 0 0 32px rgba(61,155,255,0.22); }"
     },
     {
       "name": "Service Card",
       "kind": "card",
       "refersTo": "glass-card",
-      "description": "A practice on the landing page: image, name, summary, four technology tags and a flat link. Controls inside are flat, never nested glass.",
-      "html": "<article class=\"ds-service\"><div class=\"ds-service-img\"></div><h3>Infrastructure</h3><p>Solid expertise in managing and orchestrating your infrastructures with cloud-native solutions.</p><div class=\"ds-tags\"><span class=\"ds-tag\">OpenShift</span><span class=\"ds-tag\">Kubernetes</span><span class=\"ds-tag\">Ansible</span><span class=\"ds-tag\">Terraform</span></div><a class=\"ds-flat\" href=\"#\">Learn more <svg viewBox=\"0 0 24 24\" width=\"20\" height=\"20\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14M13 6l6 6-6 6\"/></svg></a></article>",
-      "css": ".ds-service { background: linear-gradient(145deg, rgba(255,255,255,0.14), rgba(255,255,255,0.05) 60%, rgba(255,255,255,0.08)); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.2); border-radius: 24px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 40px rgba(0,0,0,0.2); color: #fff; font-family: Sora, 'Segoe UI', system-ui, sans-serif; display: flex; flex-direction: column; align-items: center; gap: 16px; max-width: 380px; padding: 24px; text-align: center; } .ds-service-img { width: 100%; aspect-ratio: 6 / 5; border: 1px solid rgba(255,255,255,0.12); border-radius: 16px; background: linear-gradient(160deg, rgba(0,6,92,0.25), rgba(68,136,255,0.35)); } .ds-service h3 { margin: 8px 0 0; font-size: 26px; font-weight: 700; } .ds-service p { margin: 0; color: rgba(255,255,255,0.8); line-height: 1.65; } .ds-tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; } .ds-tag { display: inline-block; padding: 6px 14px; border: 1px solid rgba(255,255,255,0.2); border-radius: 999px; background: rgba(68,136,255,0.1); color: #fff; font: 700 15px/1.6 Sora, 'Segoe UI', system-ui, sans-serif; letter-spacing: 0.01em; white-space: nowrap; } .ds-flat { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 24px; border: 1px solid rgba(255,255,255,0.2); border-radius: 24px; background: rgba(68,136,255,0.1); color: #fff; font: 700 16px/1.2 Sora, 'Segoe UI', system-ui, sans-serif; text-decoration: none; transition: border-color 0.3s ease, background-color 0.3s ease; margin-top: auto; } .ds-flat:hover { border-color: rgba(255,255,255,0.4); background: rgba(68,136,255,0.16); } .ds-flat:focus-visible { outline: 2px solid #4488ff; outline-offset: 3px; }"
+      "description": "A practice on the landing page: image, name, a one-sentence summary (the three share one shape and length) and a flat link. Controls inside are flat, never nested glass.",
+      "html": "<article class=\"ds-service\"><div class=\"ds-service-img\"></div><h3>Infrastructure</h3><p>We design, automate and operate cloud-native platforms, from OpenShift and Kubernetes clusters to storage, backup and monitoring.</p><a class=\"ds-flat\" href=\"#\">Learn more <svg viewBox=\"0 0 24 24\" width=\"20\" height=\"20\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14M13 6l6 6-6 6\"/></svg></a></article>",
+      "css": ".ds-service { background: linear-gradient(145deg, rgba(255,255,255,0.14), rgba(255,255,255,0.05) 60%, rgba(255,255,255,0.08)); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.2); border-radius: 24px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 40px rgba(0,0,0,0.2); color: #fff; font-family: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif; display: flex; flex-direction: column; align-items: center; gap: 16px; max-width: 380px; padding: 24px; text-align: center;  text-shadow: 0 1px 1px rgb(0 0 0 / 0.55), 0 2px 8px rgb(0 0 0 / 0.35); } .ds-service-img { width: 100%; aspect-ratio: 6 / 5; border: 1px solid rgba(255,255,255,0.12); border-radius: 16px; background: linear-gradient(160deg, rgba(0,6,92,0.25), rgba(68,136,255,0.35)); } .ds-service h3 { margin: 8px 0 0; font-size: 26px; font-weight: 700; } .ds-service p { margin: 0; color: rgba(255,255,255,0.8); line-height: 1.65; } .ds-flat { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 24px; border: 1px solid rgba(255,255,255,0.2); border-radius: 24px; background: rgba(68,136,255,0.1); color: #fff; font: 700 16px/1.2 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif; text-decoration: none; transition: border-color 0.3s ease, background-color 0.3s ease; margin-top: auto; } .ds-flat:hover { border-color: rgba(255,255,255,0.4); background: rgba(68,136,255,0.16); } .ds-flat:focus-visible { outline: 2px solid #4488ff; outline-offset: 3px; }"
     },
     {
       "name": "Primary Button",
@@ -260,7 +481,7 @@
       "refersTo": "button-primary",
       "description": "Blue glass with a blue edge: the single most important action in a group.",
       "html": "<a class=\"ds-btn-primary\" href=\"#\"><svg viewBox=\"0 0 24 24\" width=\"20\" height=\"20\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect x=\"3\" y=\"5\" width=\"18\" height=\"14\" rx=\"2\"/><path d=\"m3.5 7 8.5 6 8.5-6\"/></svg>Contact us</a>",
-      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 56px; padding: 0 32px; border-radius: 24px; -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); box-shadow: 0 4px 15px rgba(0,0,0,0.1); color: #fff; font: 700 16px/1.2 Sora, 'Segoe UI', system-ui, sans-serif; letter-spacing: 0.01em; text-decoration: none; white-space: nowrap; cursor: pointer; transition: border-color 0.3s ease, background-color 0.3s ease, transform 0.3s cubic-bezier(0.16,1,0.3,1); background: rgba(68,136,255,0.28); border: 1px solid rgba(120,170,255,0.55); } .ds-btn-primary:hover { background: rgba(68,136,255,0.42); border-color: rgba(150,190,255,0.85); transform: translateY(-2px); } .ds-btn-primary:focus-visible { outline: 2px solid #4488ff; outline-offset: 3px; } .ds-btn-primary:active { transform: scale(0.98); }"
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 56px; padding: 0 32px; border-radius: 24px; -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); box-shadow: 0 4px 15px rgba(0,0,0,0.1); color: #fff; font: 700 16px/1.2 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif; letter-spacing: 0.01em; text-decoration: none; white-space: nowrap; cursor: pointer; transition: border-color 0.3s ease, background-color 0.3s ease, transform 0.3s cubic-bezier(0.16,1,0.3,1); background: rgba(68,136,255,0.28); border: 1px solid rgba(120,170,255,0.55);  text-shadow: 0 1px 1px rgb(0 0 0 / 0.55), 0 2px 8px rgb(0 0 0 / 0.35); } .ds-btn-primary:hover { background: rgba(68,136,255,0.42); border-color: rgba(150,190,255,0.85); transform: translateY(-2px); } .ds-btn-primary:focus-visible { outline: 2px solid #4488ff; outline-offset: 3px; } .ds-btn-primary:active { transform: scale(0.98); }"
     },
     {
       "name": "Ghost Button",
@@ -268,15 +489,15 @@
       "refersTo": "button-ghost",
       "description": "Near-clear glass for the secondary action beside a primary.",
       "html": "<a class=\"ds-btn-ghost\" href=\"#\">See services</a>",
-      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 56px; padding: 0 32px; border-radius: 24px; -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); box-shadow: 0 4px 15px rgba(0,0,0,0.1); color: #fff; font: 700 16px/1.2 Sora, 'Segoe UI', system-ui, sans-serif; letter-spacing: 0.01em; text-decoration: none; white-space: nowrap; cursor: pointer; transition: border-color 0.3s ease, background-color 0.3s ease, transform 0.3s cubic-bezier(0.16,1,0.3,1); background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); } .ds-btn-ghost:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.4); transform: translateY(-2px); } .ds-btn-ghost:focus-visible { outline: 2px solid #4488ff; outline-offset: 3px; } .ds-btn-ghost:active { transform: scale(0.98); }"
+      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 56px; padding: 0 32px; border-radius: 24px; -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); box-shadow: 0 4px 15px rgba(0,0,0,0.1); color: #fff; font: 700 16px/1.2 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif; letter-spacing: 0.01em; text-decoration: none; white-space: nowrap; cursor: pointer; transition: border-color 0.3s ease, background-color 0.3s ease, transform 0.3s cubic-bezier(0.16,1,0.3,1); background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2);  text-shadow: 0 1px 1px rgb(0 0 0 / 0.55), 0 2px 8px rgb(0 0 0 / 0.35); } .ds-btn-ghost:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.4); transform: translateY(-2px); } .ds-btn-ghost:focus-visible { outline: 2px solid #4488ff; outline-offset: 3px; } .ds-btn-ghost:active { transform: scale(0.98); }"
     },
     {
       "name": "Navigation Bar",
       "kind": "nav",
       "refersTo": "header-bar",
-      "description": "Floating dark glass bar: reversed logo and links, with a drawn underline for the current section.",
+      "description": "Floating dark glass bar: the vector logo and links, with a drawn underline for the current section.",
       "html": "<nav class=\"ds-nav\" aria-label=\"Main\"><span class=\"ds-nav-logo\">SFB</span><a class=\"ds-nav-link ds-nav-current\" href=\"#\" aria-current=\"true\">Home</a><a class=\"ds-nav-link\" href=\"#\">About</a><a class=\"ds-nav-link\" href=\"#\">Services <svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m6 9 6 6 6-6\"/></svg></a><a class=\"ds-nav-link\" href=\"#\">Partners</a><a class=\"ds-nav-link\" href=\"#\">Contact</a></nav>",
-      "css": ".ds-nav { display: flex; align-items: center; gap: 28px; min-height: 64px; padding: 8px 24px; background: rgba(10,10,24,0.58); -webkit-backdrop-filter: blur(25px); backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.2); border-radius: 24px; font-family: Sora, 'Segoe UI', system-ui, sans-serif; } .ds-nav-logo { margin-right: 12px; color: #0e44fe; font-weight: 700; font-size: 22px; } .ds-nav-link { position: relative; display: inline-flex; align-items: center; gap: 5px; min-height: 44px; color: #fff; text-decoration: none; transition: color 0.3s ease; } .ds-nav-link::after { content: \"\"; position: absolute; left: 0; right: 0; bottom: 6px; height: 2px; border-radius: 2px; background: #4488ff; transform: scaleX(0); transform-origin: left; transition: transform 0.35s cubic-bezier(0.16,1,0.3,1); } .ds-nav-link:hover { color: #4488ff; } .ds-nav-link:focus-visible { outline: 2px solid #4488ff; outline-offset: 3px; } .ds-nav-current { color: #4488ff; } .ds-nav-current::after { transform: scaleX(1); }"
+      "css": ".ds-nav { display: flex; align-items: center; gap: 28px; min-height: 64px; padding: 8px 24px; background: rgba(10,10,24,0.58); -webkit-backdrop-filter: blur(25px); backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.2); border-radius: 24px; font-family: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;  text-shadow: 0 1px 1px rgb(0 0 0 / 0.55), 0 2px 8px rgb(0 0 0 / 0.35); } .ds-nav-logo { margin-right: 12px; color: #0e44fe; font-weight: 700; font-size: 22px; } .ds-nav-link { position: relative; display: inline-flex; align-items: center; gap: 5px; min-height: 44px; color: #fff; text-decoration: none; transition: color 0.3s ease; } .ds-nav-link::after { content: \"\"; position: absolute; left: 0; right: 0; bottom: 6px; height: 2px; border-radius: 2px; background: #4488ff; transform: scaleX(0); transform-origin: left; transition: transform 0.35s cubic-bezier(0.16,1,0.3,1); } .ds-nav-link:hover { color: #4488ff; } .ds-nav-link:focus-visible { outline: 2px solid #4488ff; outline-offset: 3px; } .ds-nav-current { color: #4488ff; } .ds-nav-current::after { transform: scaleX(1); }"
     },
     {
       "name": "Language Switch",
@@ -284,31 +505,23 @@
       "refersTo": "lang-switch",
       "description": "EN | IT as two real links in a pill outline; the current language is tinted blue.",
       "html": "<nav class=\"ds-lang\" aria-label=\"Language\"><a href=\"#\" lang=\"en\" aria-current=\"true\">EN</a><a href=\"#\" lang=\"it\">IT</a></nav>",
-      "css": ".ds-lang { display: inline-flex; padding: 2px; border: 1px solid rgba(255,255,255,0.2); border-radius: 999px; font-family: Sora, 'Segoe UI', system-ui, sans-serif; } .ds-lang a { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; border-radius: 999px; color: rgba(255,255,255,0.8); font-size: 14px; font-weight: 700; letter-spacing: 0.04em; text-decoration: none; transition: background-color 0.2s ease, color 0.2s ease; } .ds-lang a:hover { color: #fff; } .ds-lang a:focus-visible { outline: 2px solid #4488ff; outline-offset: 2px; } .ds-lang a[aria-current=\"true\"] { background: rgba(68,136,255,0.16); color: #fff; }"
+      "css": ".ds-lang { display: inline-flex; padding: 2px; border: 1px solid rgba(255,255,255,0.2); border-radius: 999px; font-family: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif; } .ds-lang a { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; border-radius: 999px; color: rgba(255,255,255,0.8); font-size: 14px; font-weight: 700; letter-spacing: 0.04em; text-decoration: none; transition: background-color 0.2s ease, color 0.2s ease; } .ds-lang a:hover { color: #fff; } .ds-lang a:focus-visible { outline: 2px solid #4488ff; outline-offset: 2px; } .ds-lang a[aria-current=\"true\"] { background: rgba(68,136,255,0.16); color: #fff; }"
     },
     {
       "name": "Glass Pill",
       "kind": "chip",
       "refersTo": "glass-pill",
-      "description": "A technology on a practice page: a small glass surface with 12px blur and a blue tint.",
-      "html": "<span class=\"ds-pill\">Kubernetes</span>",
-      "css": ".ds-pill { display: inline-block; padding: 11px 24px; border: 1px solid rgba(255,255,255,0.2); border-radius: 999px; background: rgba(68,136,255,0.1); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18); color: #fff; font: 700 15px/1.6 Sora, 'Segoe UI', system-ui, sans-serif; letter-spacing: 0.01em; white-space: nowrap; }"
+      "description": "A technology on a practice page: a small glass surface with 12px blur and a blue tint, opening with a clear round bead that holds a droplet of the orb's glass, which lights it; the pills are joined by their own double trace, ending in a junction point under each droplet.",
+      "html": "<span class=\"ds-pill\"><span class=\"ds-pill-bead\" aria-hidden=\"true\"></span>Kubernetes</span>",
+      "css": ".ds-pill { position: relative; display: inline-block; padding: 11.2px 24px 11.2px 51.2px; border: 1px solid rgba(255,255,255,0.2); border-radius: 999px; background: radial-gradient(circle at 23.2px 50%, rgba(68,136,255,0.04) 17px, rgba(68,136,255,0.1) 18px), radial-gradient(circle at 23.2px 50%, rgba(10,13,28,0.14) 17px, rgba(10,13,28,0.35) 18px); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18); color: #fff; font: 700 15px/24px 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif; letter-spacing: 0.01em; white-space: nowrap; text-shadow: 0 1px 1px rgb(0 0 0 / 0.55), 0 2px 8px rgb(0 0 0 / 0.35); } .ds-pill-bead { position: absolute; top: 5.2px; left: 5.2px; width: 36px; height: 36px; border: 1px solid rgba(255,255,255,0.12); border-radius: 50%; background: radial-gradient(circle at 40% 35%, rgba(207,238,255,0.9), rgba(61,155,255,0.55) 45%, rgba(0,20,60,0.2) 72%, transparent 74%); } .ds-pill:hover .ds-pill-bead { border-color: color-mix(in srgb, #3d9bff 55%, transparent); }"
     },
     {
       "name": "Logo Band",
       "kind": "custom",
       "refersTo": "glass-band",
-      "description": "A full-bleed strip of amber-tinted glass holding one-tone logos with their names beneath.",
+      "description": "A full-bleed strip of amber-tinted glass holding one-tone logos with their names beneath; clearer than other panes while the scene moves.",
       "html": "<div class=\"ds-band\"><h3>Technology partners</h3><ul><li><span class=\"ds-mark\"></span>Red Hat</li><li><span class=\"ds-mark\"></span>Commvault</li><li><span class=\"ds-mark\"></span>NetApp</li></ul></div>",
-      "css": ".ds-band { background: linear-gradient(145deg, rgba(255,255,255,0.14), rgba(255,255,255,0.05) 60%, rgba(255,255,255,0.08)); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.2); border-radius: 24px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 40px rgba(0,0,0,0.2); color: #fff; font-family: Sora, 'Segoe UI', system-ui, sans-serif; background: rgba(255,174,0,0.08); border-radius: 0; border-left: 0; border-right: 0; padding: 32px 24px; text-align: center; } .ds-band h3 { margin: 0 0 24px; color: rgba(255,255,255,0.8); font-size: 15px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; } .ds-band ul { display: flex; flex-wrap: wrap; justify-content: center; gap: 32px 64px; margin: 0; padding: 0; list-style: none; } .ds-band li { display: grid; justify-items: center; gap: 8px; color: rgba(255,255,255,0.7); font-size: 14px; } .ds-mark { width: 56px; height: 56px; border-radius: 12px; background: rgba(255,255,255,0.9); }"
-    },
-    {
-      "name": "Door",
-      "kind": "card",
-      "refersTo": "glass-card",
-      "description": "A hero quick link as a small glass card: practice name, three technologies and an arrow that nudges on hover.",
-      "html": "<a class=\"ds-door\" href=\"#\"><span class=\"ds-door-title\">Security</span><span class=\"ds-door-tech\">Keycloak · RHBK · SPID/CIE</span><svg viewBox=\"0 0 24 24\" width=\"20\" height=\"20\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14M13 6l6 6-6 6\"/></svg></a>",
-      "css": ".ds-door { background: linear-gradient(145deg, rgba(255,255,255,0.14), rgba(255,255,255,0.05) 60%, rgba(255,255,255,0.08)); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.2); border-radius: 24px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 40px rgba(0,0,0,0.2); color: #fff; font-family: Sora, 'Segoe UI', system-ui, sans-serif; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 4px 12px; max-width: 290px; padding: 16px 24px; text-decoration: none; text-align: left; transition: border-color 0.3s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1); } .ds-door-title { font-size: 18px; font-weight: 700; transition: color 0.3s ease; } .ds-door-tech { grid-column: 1; color: rgba(255,255,255,0.8); font-size: 14px; } .ds-door svg { grid-column: 2; grid-row: 1 / span 2; transition: transform 0.3s cubic-bezier(0.16,1,0.3,1); } .ds-door:hover { border-color: rgba(255,255,255,0.4); transform: translateY(-4px); } .ds-door:hover .ds-door-title { color: #4488ff; } .ds-door:hover svg { transform: translateX(4px); } .ds-door:focus-visible { outline: 2px solid #4488ff; outline-offset: 3px; }"
+      "css": ".ds-band { background: linear-gradient(145deg, rgba(255,255,255,0.14), rgba(255,255,255,0.05) 60%, rgba(255,255,255,0.08)); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.2); border-radius: 24px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 40px rgba(0,0,0,0.2); color: #fff; font-family: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif; background: linear-gradient(rgba(255,174,0,0.08), rgba(255,174,0,0.08)), rgba(10,13,28,0.2); -webkit-backdrop-filter: blur(10px) saturate(140%); backdrop-filter: blur(10px) saturate(140%); border-radius: 0; border-left: 0; border-right: 0; padding: 32px 24px; text-align: center;  text-shadow: 0 1px 1px rgb(0 0 0 / 0.55), 0 2px 8px rgb(0 0 0 / 0.35); } .ds-band h3 { margin: 0 0 24px; color: rgba(255,255,255,0.8); font-size: 15px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; } .ds-band ul { display: flex; flex-wrap: wrap; justify-content: center; gap: 32px 64px; margin: 0; padding: 0; list-style: none; } .ds-band li { display: grid; justify-items: center; gap: 8px; color: rgba(255,255,255,0.7); font-size: 14px; } .ds-mark { width: 56px; height: 56px; border-radius: 12px; background: rgba(255,255,255,0.9); }"
     },
     {
       "name": "Footer Bar",
@@ -316,7 +529,7 @@
       "refersTo": "footer-bar",
       "description": "Dark glass bar fixed to the bottom on wide screens: tagline left, social links right.",
       "html": "<footer class=\"ds-footer\"><span>SFB S.R.L. — Strive For Better</span><span class=\"ds-footer-links\"><a href=\"#\">LinkedIn</a><a href=\"#\">GitHub</a></span></footer>",
-      "css": ".ds-footer { display: flex; align-items: center; justify-content: space-between; min-height: 56px; padding: 4px 24px; background: rgba(10,10,24,0.58); -webkit-backdrop-filter: blur(25px); backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.2); border-radius: 24px; color: rgba(255,255,255,0.7); font: 400 15px/1.6 Sora, 'Segoe UI', system-ui, sans-serif; } .ds-footer-links { display: flex; gap: 24px; } .ds-footer a { display: inline-flex; align-items: center; min-height: 44px; color: rgba(255,255,255,0.7); text-decoration: none; transition: color 0.3s ease; } .ds-footer a:hover { color: #4488ff; } .ds-footer a:focus-visible { outline: 2px solid #4488ff; outline-offset: 3px; }"
+      "css": ".ds-footer { display: flex; align-items: center; justify-content: space-between; min-height: 56px; padding: 4px 24px; background: rgba(10,10,24,0.58); -webkit-backdrop-filter: blur(25px); backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.2); border-radius: 24px; color: rgba(255,255,255,0.7); font: 400 15px/1.6 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;  text-shadow: 0 1px 1px rgb(0 0 0 / 0.55), 0 2px 8px rgb(0 0 0 / 0.35); } .ds-footer-links { display: flex; gap: 24px; } .ds-footer a { display: inline-flex; align-items: center; min-height: 44px; color: rgba(255,255,255,0.7); text-decoration: none; transition: color 0.3s ease; } .ds-footer a:hover { color: #4488ff; } .ds-footer a:focus-visible { outline: 2px solid #4488ff; outline-offset: 3px; }"
     },
     {
       "name": "Section Header",
@@ -324,19 +537,37 @@
       "refersTo": "headline",
       "description": "Centred bold headline over a quiet lead, on the text halo.",
       "html": "<header class=\"ds-section-header\"><h2>Services</h2><p>Three practices, one team.</p></header>",
-      "css": ".ds-section-header { display: grid; justify-items: center; gap: 16px; text-align: center; font-family: Sora, 'Segoe UI', system-ui, sans-serif; text-shadow: 0 2px 16px rgba(0,0,0,0.95); } .ds-section-header h2 { margin: 0; color: #fff; font-size: 44px; font-weight: 700; letter-spacing: -0.015em; line-height: 1.12; text-wrap: balance; } .ds-section-header p { margin: 0; max-width: 48ch; color: rgba(255,255,255,0.8); font-size: 20px; line-height: 1.65; text-wrap: pretty; }"
+      "css": ".ds-section-header { display: grid; justify-items: center; gap: 16px; text-align: center; font-family: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif; text-shadow: 0 2px 16px rgba(0,0,0,0.95); } .ds-section-header h2 { margin: 0; color: #fff; font-size: 44px; font-weight: 700; letter-spacing: -0.015em; line-height: 1.12; text-wrap: balance; } .ds-section-header p { margin: 0; max-width: 54ch; color: rgba(255,255,255,0.8); font-size: 20px; line-height: 1.65; text-wrap: pretty; }"
+    },
+    {
+      "name": "Hero Tagline",
+      "kind": "custom",
+      "refersTo": "hero-tagline",
+      "description": "The hero's tagline in Lockup Black, standing out from the dark scene by the logo's light-blue outline (the CSS twin of the composite's; on the live page the composite adds the electric border on hover).",
+      "html": "<div class=\"ds-hero\"><h1 class=\"ds-tagline\">Infrastructure. Development. Security.</h1></div>",
+      "css": ".ds-hero { padding: 32px; background: #000; text-align: center; } .ds-tagline { --l: 0 0 0.081em #9fe8ff; margin: 0; color: #050505; font: 700 44px/1.12 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif; letter-spacing: -0.01em; text-wrap: balance; text-shadow: var(--l), var(--l), var(--l), var(--l), var(--l), var(--l), var(--l), var(--l), 0 0 0.185em rgb(159 232 255 / 0.8); }"
+    },
+    {
+      "name": "Pause Control",
+      "kind": "button",
+      "refersTo": "motion-toggle",
+      "description": "Flat text button in the footer bar that pauses the scene; quiet, brightens to white, never blue.",
+      "html": "<button class=\"ds-pause\" type=\"button\" aria-pressed=\"false\"><svg viewBox=\"0 0 24 24\" width=\"18\" height=\"18\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" aria-hidden=\"true\"><path d=\"M9 6v12M15 6v12\"/></svg>Pause animation</button>",
+      "css": ".ds-pause { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0; border: 0; background: none; color: rgba(255,255,255,0.7); font: 400 15px/1.2 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif; cursor: pointer; transition: color 0.2s ease; } .ds-pause:hover { color: #fff; } .ds-pause:focus-visible { outline: 2px solid #4488ff; outline-offset: 3px; box-shadow: 0 0 0 3px #000814; }"
     }
   ],
   "narrative": {
     "northStar": "The Liquid Circuit",
-    "overview": "The page is a black void with a living scene behind it: a water-clear orb of fused metaballs, bending the blue traces of a circuit board as it moves. Infrastructure made fluid and touchable. The circuitry is the technical truth, and the liquid is how it responds to you. The owner's brief is that each mouse touch, stroke and movement should make the page feel alive, so the orb is pushed by the cursor and can be dragged around.\n\nContent lives on **frosted glass**. Panels, cards, bands, the header and the footer bar are translucent: they blur the scene behind them and refract the orb as it drifts past, so the page and the scene read as one object. Sections are centred, with a bold headline over a quiet lead, then glass. The system is dark-only, scene-first, and speaks in one typeface, Sora.\n\nMood: futuristic and fluid, confident and polished, technical and precise, animated and interactive. No visual anti-reference has been confirmed. The owner has said this frosted-glass composition is what they prefer; a bare, text-on-void layout was tried and rejected as \"too blank and simple\".",
+    "overview": "The page is a black void with a living scene behind it: a water-clear orb of fused metaballs, bending the blue traces of a circuit board as it moves. Infrastructure made fluid and touchable. The circuitry is the technical truth, and the liquid is how it responds to you. The owner's brief is that each mouse touch, stroke and movement should make the page feel alive, so the orb answers the cursor everywhere, also under the glass, and can be dragged around.\n\nContent lives on **liquid glass**. Panels, cards, bands and pills are translucent: they frost the scene behind them, bend it at their bevels and ripple when touched. The orb travels with the story and splits into exactly as many bodies as a section has panels; each body sits inside its panel, behind the glass, and an occupied panel lights up electric blue. Sections are centred, with a bold headline over a quiet lead, then glass. The system is dark-only, scene-first, and speaks in one typeface, IBM Plex Sans.\n\nMood: futuristic and fluid, confident and polished, technical and precise, animated and interactive. No visual anti-reference has been confirmed. The owner prefers this frosted-glass composition; a bare, text-on-void layout was tried and rejected as \"too blank and simple\".",
     "keyCharacteristics": [
       "A fixed, full-screen WebGL scene is the real background; the HTML `body` is plain black.",
-      "Content on frosted glass: translucent fill with a soft sheen, backdrop blur, hairline edge, 24px corners.",
-      "Centred sections; panels and cards in wrapping rows; full-bleed glass bands for logos.",
-      "One UI accent, Circuit Glow Blue, against white on black; amber and silver appear only as faint band tints.",
-      "Bold geometric headlines in Sora, left to the scene to supply the colour.",
-      "Every pointer interaction answers back: an edge that brightens, a card that lifts, a colour shift."
+      "Content on glass: translucent fill with a soft sheen, frost, a hairline edge, 24px corners.",
+      "One orb that divides and merges like liquid: one big body in the hero, then one body per panel, on every page and every screen; on the practice pages a small droplet in each technology pill.",
+      "Circuitry joins the panels a body sits in, and every trace meets the body in a junction point, so the circuit stays whole behind a body pushed aside.",
+      "One UI accent, Circuit Glow Blue; Electric Blue is reserved for what the orb charges: panels with a body inside, the hero lockup's electric border, and a logo under the pointer.",
+      "A black hero lockup: the logo's letters and the tagline stand out from the scene by a crisp light-blue outline with a little glow, the logo under an always-on electric border that discharges under the pointer and thunders on a click.",
+      "Bold, sober headlines in IBM Plex Sans, leaving the scene to supply the colour.",
+      "Every pointer interaction answers back: a ripple, a wiped trail in the frost, a splash in the orb, a crackling edge."
     ],
     "rules": [
       {
@@ -347,6 +578,11 @@
       {
         "name": "The One Signal Rule",
         "body": "Circuit Glow Blue is the only UI accent. Amber and silver are band tints, not accents.",
+        "section": "colors"
+      },
+      {
+        "name": "The Energy Rule",
+        "body": "Electric Blue means \"the orb charges this\": a body of the orb inside a panel, the big hero orb behind the lockup, or a logo the pointer charges, and nothing else. It lives on the border (or round the glyphs) and just outside it, never as a text colour, never on a control.",
         "section": "colors"
       },
       {
@@ -361,7 +597,7 @@
       },
       {
         "name": "The Balance Rule",
-        "body": "Headings wrap with `text-wrap: balance`, paragraphs with `pretty`, so no line ends on a lone word. Sora's `ch` unit is wide, so measure is set in `ch` tuned for it (lead 48ch, copy 46ch).",
+        "body": "Headings wrap with `text-wrap: balance`, paragraphs with `pretty`, so no line ends on a lone word. Measure is set in `ch` tuned to Plex (lead 54ch, copy 58ch, about 65 characters a line).",
         "section": "typography"
       },
       {
@@ -371,29 +607,48 @@
       },
       {
         "name": "The Halo Rule",
-        "body": "Text over the open scene carries the black halo, because the scene moves behind it.",
+        "body": "Text over the open scene carries the black halo, because the scene moves behind it. Text on glass carries only the light glass text shadow, a depth cue rather than separation (the frost already parts it from the scene); it takes the full halo only on the logo bands' thin frost. The hero lockup carries neither: its black letters stand out by their light-blue outline.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Ceiling Rule",
+        "body": "Light on glass (ripples, glints, glow) stays under the text ceiling inside the text inset. Effects live in the bevel and outside the edge; text contrast is never traded for them.",
         "section": "elevation"
       },
       {
         "name": "The Flat-Inside Rule",
-        "body": "Controls and tags inside a glass card are flat tints (no blur of their own). Glass never nests inside glass.",
+        "body": "Controls inside a glass card are flat tints (no blur of their own). Glass never nests inside glass.",
         "section": "elevation"
       }
     ],
     "dos": [
-      "**Do** keep the live scene behind every page and forward pointer events to it, so the page always reacts to the cursor.",
-      "**Do** put content on frosted glass panels: translucent sheen fill, backdrop blur, 20% white hairline rising to 40%, 24px corners.",
+      "**Do** keep the live scene behind every page and let the pointer reach the orb everywhere, also over glass.",
+      "**Do** put content on frosted glass panels: translucent sheen fill, frost, 20% white hairline rising to 40%, 24px corners.",
+      "**Do** give each section's orb exactly as many bodies as it has panels, each wholly inside its panel (radius at most 0.35 of its shorter side), on every page and at every screen size, and keep its interaction inside that panel.",
+      "**Do** run every trace that meets a body into a junction point (a small round solder dot, never a block) at the body's rest point.",
+      "**Do** move the orb between sections' anchors on a timed transition, triggered by the section change.",
+      "**Do** keep Electric Blue on the border of an occupied panel, the hero lockup's border and a charged logo, and a panel's electricity under the pointer only.",
+      "**Do** keep the hero lockup black (Lockup Black) inside its Pulse Cyan outline, and use the light logo (`sfb-logo-light.svg`) everywhere else on the canvas.",
+      "**Do** keep CSS glass a complete design on its own: it is what touch visitors and every restrictive preference get.",
+      "**Do** give every text on glass the glass text shadow (`--glass-text-shadow`), and text over the open scene the halo.",
       "**Do** make anything pressable a real link or button with a visible focus ring.",
       "**Do** use Circuit Glow Blue as the only UI accent.",
       "**Do** show partner and customer logos in one tone, with their names beneath.",
       "**Do** write copy for both languages together; Italian runs longer, so test its wrapping.",
-      "**Do** honour `prefers-reduced-motion`: no hero animation, instant scrolling, a still scene."
+      "**Do** honour `prefers-reduced-motion` and the pause control: no reveals, no arcs, instant scrolling, a still scene."
     ],
     "donts": [
       "**Don't** return to bare text on the void as the page's structure. It was tried and rejected as too blank.",
+      "**Don't** put a plate, scrim or panel behind the hero lockup; it sits over the orb on its light-blue outline.",
       "**Don't** nest blurred glass inside glass. Controls inside a card are flat tints.",
+      "**Don't** let any glass light or glow push text past the text ceiling.",
+      "**Don't** let circuit traces fade out to change routing; they reshape.",
+      "**Don't** scrub the orb's poses with the scroll position, or give portrait screens a separate, unsplit choreography.",
+      "**Don't** join the technology pills' network to the circuit that frames their section.",
+      "**Don't** use Electric Blue for text, controls or anything but an occupied panel, the hero lockup's border and a charged logo.",
+      "**Don't** light the scene round the logo on its thunder, or give the tagline sparks, arcs or another colour on hover; the owner removed all three.",
       "**Don't** use the pink-tinted glass; the owner dropped it from the system.",
-      "**Don't** place the logo's charcoal \"FB\" (#4d494a) on the black canvas. Use the reversed lockup (Logo Light).",
+      "**Don't** place the logo's charcoal \"FB\" (#4d494a) on the black canvas. Use the vector logo: `sfb-logo-light.svg` (Logo Light letters) on the canvas, `sfb-logo.svg` (Lockup Black letters) only in the hero, inside its outline.",
       "**Don't** use opaque panel fills. The scene must show through every surface.",
       "**Don't** use Unicode glyphs or emoji as icons.",
       "**Don't** introduce a light theme. The canvas is always black.",

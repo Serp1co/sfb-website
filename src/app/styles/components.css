@@ -1,5 +1,7 @@
 /* ------------------------------------------------------------------ */
 /*  Shell: the fixed scene and the overlay that carries the content.   */
+/*  ExperienceRoot renders it in each root layout, so the scene and    */
+/*  the glass persist across client navigations.                       */
 /* ------------------------------------------------------------------ */
 
 .site {
@@ -7,29 +9,45 @@
   min-height: 100vh;
 }
 
+/*
+ * The scene never takes the pointer: the motion runtime listens on window, so the orb feels the
+ * cursor everywhere while every link and line of text above it keeps working.
+ */
 .scene {
   position: fixed;
   inset: 0;
   z-index: 0;
+  pointer-events: none;
 }
 
+/*
+ * The canvas wrapper. With CSS glass, and for the reduced-motion still, the scene fades in here
+ * once it has drawn. With WebGL glass the canvas also draws the panels, so the wrapper is shown at
+ * once and the composite fades the scene in by itself (fading the wrapper would fade the glass).
+ */
 .scene-fade {
   position: absolute;
   inset: 0;
+  transition: opacity 1.2s var(--ease-out);
 }
 
-/* Reduced motion: the scene settles unseen, then fades in as a still frame. */
-.scene-fade[data-still="true"][data-reveal="hidden"] {
+.scene-fade[data-reveal="hidden"] {
   opacity: 0;
 }
 
-.scene-fade[data-still="true"] {
+/* Reduced motion: the scene settles unseen, then fades in as a still frame. */
+.scene-fade[data-still]:not([data-still="false"]) {
   transition: opacity 0.8s ease;
 }
 
+/*
+ * clip, not hidden: the scrims behind bare text may reach past the gutters, but never cause
+ * horizontal scrolling. Fixed descendants (header, footer bar) are not clipped by it.
+ */
 .site-overlay {
   position: relative;
   z-index: 1;
+  overflow-x: clip;
 }
 
 /*
@@ -46,20 +64,125 @@
   }
 }
 
+/* The WebGL composite dims its own background there instead; this overlay would dim its glass too. */
+html[data-engine="webgl"] .scene::after {
+  display: none;
+}
+
+/*
+ * Under CSS glass too, once the scene shows (its wrapper revealed, scene/scene-canvas.tsx; v3.1):
+ * this overlay would also dim the light the composite draws around a lit pane. The composite reads
+ * this overlay's computed style and draws whatever share of the dim it leaves undrawn
+ * (scene/pipeline/css-dim.ts), so the scene and the copy's contrast stay as they were. Before the
+ * scene shows, and where :has() is unknown, the overlay stays. Its own rule: a list would lose the
+ * one above wherever :has() is unknown.
+ */
+.scene:has(.scene-fade[data-reveal="shown"])::after {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* An opacity fade is not motion: the still frame keeps its fade-in. */
+  .scene-fade[data-still]:not([data-still="false"]) {
+    transition-duration: 0.8s !important;
+  }
+}
+
+/* System colours replace the palette, so the scene would only fight the text the visitor chose. */
+@media (forced-colors: active) {
+  .scene {
+    visibility: hidden;
+  }
+}
+
+/*
+ * A renderer that gave up leaves its last frame on the canvas (glass panes where the panels used
+ * to be): the fallback is no scene. visibility, not display, so the canvas keeps its size.
+ */
+html[data-scene="off"] .scene {
+  visibility: hidden;
+}
+
 /* ------------------------------------------------------------------ */
 /*  Glass: the look of things you can touch. Translucent fill,         */
 /*  backdrop blur, a hairline edge that brightens on hover, 24px.      */
+/*                                                                     */
+/*  Two renderers draw this one material. The CSS frost below is the   */
+/*  designed baseline: touch, reduced motion, no WebGL, and every      */
+/*  visitor before the scene boots. For a mouse visitor with WebGL the */
+/*  composite redraws each [data-glass] surface as liquid glass that   */
+/*  refracts the live scene, and html[data-engine="webgl"] fades this  */
+/*  frost out. The header, footer bar and menus are never [data-glass]:*/
+/*  HTML scrolls under them, so they stay CSS glass.                   */
 /* ------------------------------------------------------------------ */
+
+/* How much of the CSS frost shows: 1 all of it, 0 handed over to the WebGL glass. */
+@property --glass-a {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+
+/* A glass button's hover, 0 to 1. A number, so its fill eases: a gradient layer cannot transition. */
+@property --glass-lit {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+/*
+ * The fills, re-declared on each glass element so var(--glass-a) resolves where it fades (a :root
+ * token would resolve once, at :root, and never fade). Only the glass element itself reads them;
+ * flat controls inside it keep their own :root tints.
+ *
+ * Under every fill and tint lies a dark floor. The frost shows whatever the scene puts behind it,
+ * and over the orb the blur alone left it too bright for the text on it (a band label measured
+ * 4.06:1 on a phone); 0.35 of night under the fill caps that, and it fades out with the fill when
+ * the WebGL glass takes over. The floor is the bottom background layer, a colour, so the fills
+ * above it are image layers: a flat tint is wrapped in a one-colour gradient where it is used.
+ */
+.glass,
+.btn,
+[data-glass] {
+  --glass-floor: rgb(10 13 28 / calc(0.35 * var(--glass-a)));
+  --glass-fill: linear-gradient(
+    145deg,
+    rgb(255 255 255 / calc(0.14 * var(--glass-a))),
+    rgb(255 255 255 / calc(0.05 * var(--glass-a))) 60%,
+    rgb(255 255 255 / calc(0.08 * var(--glass-a)))
+  );
+  --glass-amber: rgb(255 174 0 / calc(0.08 * var(--glass-a)));
+  --glass-silver: rgb(204 204 204 / calc(0.07 * var(--glass-a)));
+  --glass-pill-fill: rgb(68 136 255 / calc(0.1 * var(--glass-a)));
+  /*
+   * A clear window's own tint where the frost leaves it out (v3.3): 0.4 of the white fill and the
+   * night floor (the composite's window tint scale), flattened into one colour so it can ease from
+   * the photo's tile.
+   */
+  --glass-window-tint: rgb(59 62 74 / calc(0.17 * var(--glass-a)));
+  /* 5% white at rest, 10% lit; the primary's blue 28% at rest, 42% lit (DESIGN.md). */
+  --glass-btn-fill: rgb(255 255 255 / calc((0.05 + 0.05 * var(--glass-lit)) * var(--glass-a)));
+  --glass-btn-primary-fill: rgb(68 136 255 / calc((0.28 + 0.14 * var(--glass-lit)) * var(--glass-a)));
+}
 
 .glass {
   --blur: 20px;
-  background: var(--glass-fill);
-  -webkit-backdrop-filter: blur(var(--blur));
-  backdrop-filter: blur(var(--blur));
+  background: var(--glass-fill), var(--glass-floor);
+  -webkit-backdrop-filter: blur(var(--blur)) saturate(var(--glass-saturate));
+  backdrop-filter: blur(var(--blur)) saturate(var(--glass-saturate));
   border: 1px solid var(--hairline);
   border-radius: var(--radius-lg);
   box-shadow: var(--sheen), var(--shadow-lift);
-  text-shadow: none;
+  /*
+   * Its text takes the glass's light depth shadow in place of the scene's halo (globals.css), and
+   * so do the controls and labels in it, each of which sets it again on itself.
+   */
+  text-shadow: var(--glass-text-shadow);
+}
+
+/* The focus ring's dark gap (globals.css) joins the surface's own shadows instead of replacing them. */
+.glass:focus-visible {
+  box-shadow: var(--sheen), var(--shadow-lift), var(--focus-gap-shadow);
 }
 
 /* Panels: content sits on glass, which refracts the orb whenever it passes behind. */
@@ -74,9 +197,231 @@
     border-color: var(--hairline-hover);
   }
 
-  .glass-card-lift:hover {
+  /*
+   * A service card lifts with its cell: a transform makes a stacking context, and on the card
+   * itself that would paint its frost layer over its edge and sheen (below).
+   */
+  .glass-card-lift:hover,
+  .service-cell:hover {
     transform: translateY(-4px);
   }
+}
+
+.service-cell {
+  transition: transform 0.4s var(--ease-out);
+}
+
+/* ------------------------------------------------------------------ */
+/*  Glass with a clear window (v3.3): the service cards' image frames  */
+/*  and the pills' beads, each a [data-glass-window].                  */
+/*                                                                     */
+/*  A backdrop blur covers its element's whole box, and a child cannot */
+/*  un-blur its parent's backdrop, so on CSS glass a window showed the */
+/*  body behind it only as a blurred blob. The frost now leaves the    */
+/*  window out with a clip-path cut (a mask on the element with the    */
+/*  backdrop-filter renders neither in Chrome), and the window keeps a */
+/*  faint tint and its hairline, as the composite's windows do. Glass  */
+/*  with a frost layer must never sit under an opacity below 1: that   */
+/*  ancestor would be a backdrop root and blank the layer.             */
+/* ------------------------------------------------------------------ */
+
+/*
+ * The window's outline for those cuts: a rounded rectangle from --hole-l, --hole-t, --hole-r and
+ * --hole-b with corners of --hole-rad, traced in 15° steps (an inscribed polygon, at most 0.14 px
+ * inside a 16 px corner, under the window's hairline). With the radius at half the side it is a
+ * circle (a bead). Each user follows it with the point it started from, and a cut is the outline
+ * after an outer rectangle in one evenodd polygon.
+ */
+.service-card::before,
+.glass-pill {
+  --hole-outline:
+    var(--hole-l) calc(var(--hole-t) + var(--hole-rad)),
+    calc(var(--hole-l) + 0.0341 * var(--hole-rad)) calc(var(--hole-t) + 0.7412 * var(--hole-rad)),
+    calc(var(--hole-l) + 0.134 * var(--hole-rad)) calc(var(--hole-t) + 0.5 * var(--hole-rad)),
+    calc(var(--hole-l) + 0.2929 * var(--hole-rad)) calc(var(--hole-t) + 0.2929 * var(--hole-rad)),
+    calc(var(--hole-l) + 0.5 * var(--hole-rad)) calc(var(--hole-t) + 0.134 * var(--hole-rad)),
+    calc(var(--hole-l) + 0.7412 * var(--hole-rad)) calc(var(--hole-t) + 0.0341 * var(--hole-rad)),
+    calc(var(--hole-l) + var(--hole-rad)) var(--hole-t),
+    calc(var(--hole-r) - var(--hole-rad)) var(--hole-t),
+    calc(var(--hole-r) - 0.7412 * var(--hole-rad)) calc(var(--hole-t) + 0.0341 * var(--hole-rad)),
+    calc(var(--hole-r) - 0.5 * var(--hole-rad)) calc(var(--hole-t) + 0.134 * var(--hole-rad)),
+    calc(var(--hole-r) - 0.2929 * var(--hole-rad)) calc(var(--hole-t) + 0.2929 * var(--hole-rad)),
+    calc(var(--hole-r) - 0.134 * var(--hole-rad)) calc(var(--hole-t) + 0.5 * var(--hole-rad)),
+    calc(var(--hole-r) - 0.0341 * var(--hole-rad)) calc(var(--hole-t) + 0.7412 * var(--hole-rad)),
+    var(--hole-r) calc(var(--hole-t) + var(--hole-rad)),
+    var(--hole-r) calc(var(--hole-b) - var(--hole-rad)),
+    calc(var(--hole-r) - 0.0341 * var(--hole-rad)) calc(var(--hole-b) - 0.7412 * var(--hole-rad)),
+    calc(var(--hole-r) - 0.134 * var(--hole-rad)) calc(var(--hole-b) - 0.5 * var(--hole-rad)),
+    calc(var(--hole-r) - 0.2929 * var(--hole-rad)) calc(var(--hole-b) - 0.2929 * var(--hole-rad)),
+    calc(var(--hole-r) - 0.5 * var(--hole-rad)) calc(var(--hole-b) - 0.134 * var(--hole-rad)),
+    calc(var(--hole-r) - 0.7412 * var(--hole-rad)) calc(var(--hole-b) - 0.0341 * var(--hole-rad)),
+    calc(var(--hole-r) - var(--hole-rad)) var(--hole-b),
+    calc(var(--hole-l) + var(--hole-rad)) var(--hole-b),
+    calc(var(--hole-l) + 0.7412 * var(--hole-rad)) calc(var(--hole-b) - 0.0341 * var(--hole-rad)),
+    calc(var(--hole-l) + 0.5 * var(--hole-rad)) calc(var(--hole-b) - 0.134 * var(--hole-rad)),
+    calc(var(--hole-l) + 0.2929 * var(--hole-rad)) calc(var(--hole-b) - 0.2929 * var(--hole-rad)),
+    calc(var(--hole-l) + 0.134 * var(--hole-rad)) calc(var(--hole-b) - 0.5 * var(--hole-rad)),
+    calc(var(--hole-l) + 0.0341 * var(--hole-rad)) calc(var(--hole-b) - 0.7412 * var(--hole-rad)),
+    var(--hole-l) calc(var(--hole-b) - var(--hole-rad)),
+    var(--hole-l) calc(var(--hole-t) + var(--hole-rad));
+}
+
+/*
+ * A service card's frost is a layer of its own under the card (its ::before), cut round the
+ * window: a cut in the card itself would cut the window's photo, tile and tint away with it. The
+ * card keeps everything else: its edge, sheen and glows, its text. The layer paints first in the
+ * card's cell, which isolates, and the card is no stacking context (no blur of its own, and it
+ * lifts with its cell), so all of the card lies over the layer in the order one element paints
+ * them. No reveal fades the card or its cell, only their contents (motion/reveals.ts). The cut
+ * follows the window's border box: the card's 1 px edge and padding in from the layer's box (the
+ * card's border box), and as tall as the photo at its proportions plus the window's two 1 px
+ * hairlines, worked out from the cell's width (100cqi; the card fills the cell).
+ */
+.service-card {
+  position: relative;
+  background: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.service-card::before {
+  --hole-l: calc(1px + var(--card-pad));
+  --hole-t: var(--hole-l);
+  --hole-r: calc(100% - var(--hole-l));
+  --hole-b: calc(var(--hole-l) + 2px + (100cqi - 2 * var(--hole-l) - 2px) * var(--window-h) / var(--window-w));
+  --hole-rad: var(--radius-md);
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--glass-fill), var(--glass-floor);
+  -webkit-backdrop-filter: blur(var(--blur)) saturate(var(--glass-saturate));
+  backdrop-filter: blur(var(--blur)) saturate(var(--glass-saturate));
+  clip-path: polygon(evenodd, 0 0, 100% 0, 100% 100%, 0 100%, 0 0, var(--hole-outline));
+  pointer-events: none;
+}
+
+/*
+ * A cell with a body of the orb inside it (data-energized, set by the glass registry; owner,
+ * 2026-11-02) lights up: its edge turns electric blue, with a 1 px ring and a faint glow inside it,
+ * and a soft glow outside it. One rule for every cell, so the practice pages' feature cards and
+ * call to action light exactly as the landing's panels and cards do (v3). The WebGL composite draws
+ * all of it itself, and under the pointer the crackle. Under CSS glass the composite draws the
+ * light outside the pane while the scene is on screen (below), so the outer glow here is only the
+ * fallback for when it is not; the edge and the inner glow are always the CSS's own.
+ * Quick to light, slower to fade, like the energy it follows (the glow takes 0.6 s to go, the edge
+ * keeps the hover's 0.3 s); reduced motion makes both instant (globals.css), so the glow is static
+ * there. The shadow lists keep the rest list's first two entries in place, so they interpolate
+ * instead of jumping.
+ */
+html:not([data-engine="webgl"]) .glass-card {
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.6s ease,
+    transform 0.4s var(--ease-out);
+}
+
+html:not([data-engine="webgl"]) .glass-card[data-energized="true"] {
+  /* The glow outside the pane, near and far: two shadows, zeroed once the scene draws its own (below). */
+  --energy-glow:
+    0 0 22px 2px color-mix(in srgb, var(--electric) 45%, transparent),
+    0 0 64px 8px color-mix(in srgb, var(--electric) 14%, transparent);
+  /* The hotter edge and glow for the pointer or keyboard focus on a lit cell (below). */
+  --energy-hot-edge: color-mix(in srgb, var(--electric) 60%, var(--white));
+  --energy-hot-glow:
+    0 0 28px 4px color-mix(in srgb, var(--electric) 58%, transparent),
+    0 0 72px 10px color-mix(in srgb, var(--electric) 20%, transparent);
+  --energy-hot-shadow:
+    var(--sheen),
+    var(--shadow-lift),
+    0 0 0 1px color-mix(in srgb, var(--electric) 55%, transparent),
+    var(--energy-hot-glow),
+    inset 0 0 32px color-mix(in srgb, var(--electric) 22%, transparent);
+  border-color: var(--electric);
+  box-shadow:
+    var(--sheen),
+    var(--shadow-lift),
+    0 0 0 1px color-mix(in srgb, var(--electric) 35%, transparent),
+    var(--energy-glow),
+    inset 0 0 26px color-mix(in srgb, var(--electric) 16%, transparent);
+  transition:
+    border-color 0.3s var(--ease-out),
+    box-shadow 0.3s var(--ease-out),
+    transform 0.4s var(--ease-out);
+}
+
+/*
+ * Keyboard focus inside a lit cell, and the pointer on one: the edge runs hotter, the CSS stand-in
+ * for the WebGL crackle, which answers the same two cues (v3). Two rules, not one list: a browser
+ * without :has() drops only the first. On touch the composite gives the electricity to the lit
+ * panel nearest the view's centre; CSS cannot tell which that is, so every lit panel keeps the
+ * baseline there.
+ */
+html:not([data-engine="webgl"]) .glass-card[data-energized="true"]:has(:focus-visible) {
+  border-color: var(--energy-hot-edge);
+  box-shadow: var(--energy-hot-shadow);
+}
+
+@media (hover: hover) {
+  html:not([data-engine="webgl"]) .glass-card[data-energized="true"]:hover {
+    border-color: var(--energy-hot-edge);
+    box-shadow: var(--energy-hot-shadow);
+  }
+
+  /*
+   * A lit card stays on its layout box under the pointer: the composite draws its light just
+   * outside that box, under CSS glass too (since v3), and a 4 px lift would open a gap below the
+   * pane and bury the band above it. The hotter edge is the hover cue instead, as on WebGL glass.
+   */
+  html:not([data-engine="webgl"]) .glass-card-lift[data-energized="true"]:hover,
+  html:not([data-engine="webgl"]) .service-cell:has(> [data-energized="true"]):hover {
+    transform: none;
+  }
+}
+
+/*
+ * A technology pill with a body in it (practice pages; since v3.1 each pill holds a small droplet
+ * of its own) lights up the same way, scaled to its 48 px height: the same edge and 1 px ring, a
+ * 14 px and a 36 px glow, a faint inner one. Pills are labels, not controls, so they have no hotter
+ * edge. Same timing as the cells.
+ */
+html:not([data-engine="webgl"]) .glass-pill {
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.6s ease;
+}
+
+html:not([data-engine="webgl"]) .glass-pill[data-energized="true"] {
+  --energy-glow:
+    0 0 14px 1px color-mix(in srgb, var(--electric) 45%, transparent),
+    0 0 36px 4px color-mix(in srgb, var(--electric) 14%, transparent);
+  border-color: var(--electric);
+  box-shadow:
+    var(--sheen),
+    0 0 0 1px color-mix(in srgb, var(--electric) 35%, transparent),
+    var(--energy-glow),
+    inset 0 0 14px color-mix(in srgb, var(--electric) 16%, transparent);
+  transition:
+    border-color 0.3s var(--ease-out),
+    box-shadow 0.3s var(--ease-out);
+}
+
+/*
+ * Once the scene shows (its wrapper revealed, as for the dim above; v3.1) the composite draws the
+ * light outside every lit pane, glow and crackle, as with WebGL glass, and the CSS glow would stack
+ * on it into one too strong for a phone. The CSS keeps the edge: the electric border, its 1 px ring
+ * and the glow inside, which the composite leaves to the frost, so a lit pane still reads as lit
+ * wherever the canvas light is faint. Before the scene shows, once it is off (data-scene), and
+ * where :has() is unknown, the CSS glow stays whole. Zero shadows, not none: the lists keep their
+ * shape, so the CSS glow eases out while the scene fades in.
+ */
+html:not([data-engine="webgl"]):not([data-scene="off"])
+  .scene:has(.scene-fade[data-reveal="shown"])
+  ~ .site-overlay
+  :is(.glass-card, .glass-pill)[data-energized="true"] {
+  --energy-glow: 0 0 transparent, 0 0 transparent;
+  --energy-hot-glow: 0 0 transparent, 0 0 transparent;
 }
 
 /* Full-bleed glass strip: no side edges, square corners. */
@@ -85,16 +430,139 @@
   border-inline: 0;
 }
 
+/*
+ * A technology pill keeps its droplet of the orb in the bead at its leading end (v3.2): a clear
+ * round window (data-glass-window), concentric with the end cap, the label padded past it. The
+ * composite clears a window's frost on WebGL glass. On CSS glass the pill's own clip-path cuts the
+ * bead's disc out of it (v3.3), inside the hairline ring, so the droplet shows as a ball and not
+ * as a glow under the blur. The cut is on the pill itself, not on a frost layer of its own as on
+ * the service cards: a pill enters by fading whole (its label is bare text, motion/reveals.ts),
+ * and opacity on the element with the blur keeps its backdrop, where on a frost layer's parent it
+ * would blank the layer for the whole fade. Nothing of the pill paints inside the cut, so the bead
+ * has no tint of its own (the droplet nearly fills it). The rectangle the cut sits in reaches past
+ * the pill, so its glow outside stays whole. A hairline rings the bead in both modes, as one frames
+ * the service cards' windows.
+ */
 .glass-pill {
   --blur: 12px;
-  padding: 0.7rem 1.5rem;
+  --pill-pad-y: 0.7rem;
+  --pill-line: 1.5rem;
+  /*
+   * 36 px across: the droplet (a radius of 0.3 of the pill's 48 px height, 29 px across) sits
+   * wholly inside the ring with 2.5 px to spare.
+   */
+  --pill-bead: 2.25rem;
+  /* Equal top, bottom and left, from the padding edge: the bead is concentric with the end cap. */
+  --pill-bead-inset: calc((2 * var(--pill-pad-y) + var(--pill-line) - var(--pill-bead)) / 2);
+  --pill-bead-cx: calc(var(--pill-bead-inset) + var(--pill-bead) / 2);
+  /* The label starts 10 px past the bead, as a glass button's label does past its icon. */
+  --pill-lead: calc(var(--pill-bead-inset) + var(--pill-bead) + 0.625rem);
+  /* The bead's disc inside its 1 px ring, from the pill's border box; none once the bead is gone. */
+  --hole-rad: max(0px, var(--pill-bead) / 2 - 1px);
+  --hole-l: calc(1px + var(--pill-bead-cx) - var(--hole-rad));
+  --hole-r: calc(1px + var(--pill-bead-cx) + var(--hole-rad));
+  --hole-t: calc(50% - var(--hole-rad));
+  --hole-b: calc(50% + var(--hole-rad));
+  /* Past the 36 px glow of a lit pill (below) on every side. */
+  --pill-clip-reach: 4rem;
+  position: relative;
+  padding: var(--pill-pad-y) 1.5rem var(--pill-pad-y) var(--pill-lead);
   border-radius: var(--radius-pill);
-  background: var(--blue-tint);
+  background: linear-gradient(var(--glass-pill-fill), var(--glass-pill-fill)), var(--glass-floor);
   box-shadow: var(--sheen);
+  clip-path: polygon(
+    evenodd,
+    calc(-1 * var(--pill-clip-reach)) calc(-1 * var(--pill-clip-reach)),
+    calc(100% + var(--pill-clip-reach)) calc(-1 * var(--pill-clip-reach)),
+    calc(100% + var(--pill-clip-reach)) calc(100% + var(--pill-clip-reach)),
+    calc(-1 * var(--pill-clip-reach)) calc(100% + var(--pill-clip-reach)),
+    calc(-1 * var(--pill-clip-reach)) calc(-1 * var(--pill-clip-reach)),
+    var(--hole-outline)
+  );
   font-size: 0.9375rem;
   font-weight: 700;
   letter-spacing: 0.01em;
+  line-height: var(--pill-line);
   white-space: nowrap;
+}
+
+.pill-bead {
+  position: absolute;
+  top: var(--pill-bead-inset);
+  left: var(--pill-bead-inset);
+  width: var(--pill-bead);
+  height: var(--pill-bead);
+  border: 1px solid var(--hairline-soft);
+  border-radius: 50%;
+  pointer-events: none;
+  transition: border-color 0.3s ease;
+}
+
+/* Its droplet inside (the pill lit, either glass): the ring takes a softer share of the electric edge. */
+.glass-pill[data-energized="true"] .pill-bead {
+  border-color: color-mix(in srgb, var(--electric) 55%, transparent);
+  transition: border-color 0.3s var(--ease-out);
+}
+
+/*
+ * No droplet can show: the scene is gone (a renderer failure) or the pill is solid (Preferences,
+ * below). An empty ring would read as a control, so the bead goes and the label recentres; at
+ * zero size the cut in the frost closes with it. Forced colours and paper do the same.
+ */
+html[data-scene="off"] .glass-pill {
+  --pill-bead: 0px;
+  --pill-lead: 1.5rem;
+}
+
+html[data-scene="off"] .pill-bead {
+  display: none;
+}
+
+/*
+ * The WebGL glass has taken over: the CSS frost fades out while the boot wave condenses the
+ * liquid glass in its place. The surface no longer lifts on hover or shrinks on press, because
+ * the composite draws it from its layout box (the shader shows hover and press instead).
+ * Focus rings stay: they are drawn by the DOM, above the canvas.
+ */
+html[data-engine="webgl"] [data-glass] {
+  --glass-a: 0;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border-color: transparent;
+  box-shadow: none;
+  transform: none;
+  /*
+   * box-shadow is not in the list: the focus ring's dark gap is drawn with it (below), and on a
+   * handover clock it would linger round a control for most of a second after focus moved on.
+   * The CSS shadows (a 1px highlight, a soft drop) go at once while the frost fades.
+   */
+  transition:
+    --glass-a var(--glass-handover) var(--glass-handover-ease) var(--glass-handover-delay),
+    -webkit-backdrop-filter var(--glass-handover) var(--glass-handover-ease) var(--glass-handover-delay),
+    backdrop-filter var(--glass-handover) var(--glass-handover-ease) var(--glass-handover-delay),
+    border-color var(--glass-handover) var(--glass-handover-ease) var(--glass-handover-delay);
+}
+
+/* The focus ring's dark gap is the one shadow WebGL glass keeps: the ring is DOM, above the canvas. */
+html[data-engine="webgl"] [data-glass]:focus-visible {
+  box-shadow: var(--focus-gap-shadow);
+}
+
+/*
+ * A frost layer hands over with its surface: its fills follow the surface's --glass-a, its blur
+ * eases out on the same clock. Its cell stays on the layout box the composite draws from, as the
+ * surface does.
+ */
+html[data-engine="webgl"] .service-card::before {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  transition:
+    -webkit-backdrop-filter var(--glass-handover) var(--glass-handover-ease) var(--glass-handover-delay),
+    backdrop-filter var(--glass-handover) var(--glass-handover-ease) var(--glass-handover-delay);
+}
+
+html[data-engine="webgl"] .service-cell {
+  transform: none;
 }
 
 /* A control that lives inside a glass card: tinted and edged, but not another blurred layer. */
@@ -111,7 +579,8 @@
   color: var(--white);
   font: 700 1rem/1.2 var(--font);
   text-decoration: none;
-  text-shadow: none;
+  text-shadow: var(--glass-text-shadow);
+  cursor: pointer;
   transition:
     border-color 0.3s ease,
     background-color 0.3s ease;
@@ -136,6 +605,7 @@
 /*  Buttons and links (real <a> and <button>, never clickable divs)    */
 /* ------------------------------------------------------------------ */
 
+/* A glass droplet: the frost of a panel at button size, with the same top highlight. */
 .btn {
   --blur: 20px;
   display: inline-flex;
@@ -146,30 +616,35 @@
   padding: 0 var(--s-6);
   border: 1px solid var(--hairline);
   border-radius: var(--radius-lg);
-  background: var(--glass-ghost);
-  -webkit-backdrop-filter: blur(var(--blur));
-  backdrop-filter: blur(var(--blur));
-  box-shadow: var(--shadow-rest);
+  background: linear-gradient(var(--glass-btn-fill), var(--glass-btn-fill)), var(--glass-floor);
+  -webkit-backdrop-filter: blur(var(--blur)) saturate(var(--glass-saturate));
+  backdrop-filter: blur(var(--blur)) saturate(var(--glass-saturate));
+  box-shadow: var(--sheen), var(--shadow-rest);
   color: var(--white);
   font: 700 1rem/1.2 var(--font);
   letter-spacing: 0.01em;
   text-align: center;
   text-decoration: none;
-  text-shadow: none;
+  text-shadow: var(--glass-text-shadow);
   white-space: nowrap;
   cursor: pointer;
   transition:
     border-color 0.3s ease,
-    background-color 0.3s ease,
+    --glass-lit 0.3s ease,
     transform 0.3s var(--ease-out);
+}
+
+.btn:focus-visible {
+  box-shadow: var(--sheen), var(--shadow-rest), var(--focus-gap-shadow);
 }
 
 .btn:active {
   transform: scale(0.98);
 }
 
+/* The one tinted action per group (Liquid Glass: accent tint on the primary only). */
 .btn-primary {
-  background: var(--blue-strong);
+  background: linear-gradient(var(--glass-btn-primary-fill), var(--glass-btn-primary-fill)), var(--glass-floor);
   border-color: rgba(120, 170, 255, 0.55);
 }
 
@@ -181,13 +656,12 @@
 
 @media (hover: hover) {
   .btn:hover {
+    --glass-lit: 1;
     border-color: var(--hairline-hover);
-    background: var(--glass-white);
     transform: translateY(-2px);
   }
 
   .btn-primary:hover {
-    background: var(--blue-strong-hover);
     border-color: rgba(150, 190, 255, 0.85);
   }
 }
@@ -216,13 +690,19 @@
   text-decoration-thickness: 2px;
   text-underline-offset: 0.3em;
   transition:
-    color 0.3s ease,
-    text-decoration-color 0.3s ease;
+    text-decoration-color 0.18s var(--ease-out),
+    text-decoration-thickness 0.18s var(--ease-out);
 }
 
+/*
+ * Hover keeps the text white, in every mode, and gives the underline the full accent, thicker.
+ * Blue text would need a backdrop darker than glass or the open scene guarantee (luminance
+ * <= 0.019 for 4.5:1, where the WebGL text ceiling is 0.12 and the CSS frost over the orb is
+ * brighter still).
+ */
 .text-link:hover {
-  color: var(--blue);
-  text-decoration-color: currentColor;
+  text-decoration-color: var(--blue);
+  text-decoration-thickness: 3px;
 }
 
 .icon {
@@ -237,32 +717,8 @@
 }
 
 /* ------------------------------------------------------------------ */
-/*  Tags: plain labels, no blur (they are not controls)                */
-/* ------------------------------------------------------------------ */
-
-.tag-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--s-2);
-  list-style: none;
-  padding: 0;
-}
-
-.tag {
-  display: inline-block;
-  padding: 0.4rem 0.9rem;
-  border: 1px solid var(--hairline);
-  border-radius: var(--radius-pill);
-  background: var(--blue-tint);
-  font-size: 0.9375rem;
-  font-weight: 700;
-  letter-spacing: 0.01em;
-  white-space: nowrap;
-  text-shadow: none;
-}
-
-/* ------------------------------------------------------------------ */
-/*  Header                                                             */
+/*  Header: one Regular-tier glass bar. Everything inside it is flat   */
+/*  (a blur nested in the bar would sample nothing).                   */
 /* ------------------------------------------------------------------ */
 
 .site-header {
@@ -324,7 +780,7 @@
   min-height: 2.75rem;
   color: var(--white);
   text-decoration: none;
-  text-shadow: none;
+  text-shadow: var(--glass-text-shadow);
   transition: color 0.3s ease;
 }
 
@@ -366,17 +822,24 @@
   transform: rotate(180deg);
 }
 
+/*
+ * The Services menu is a child of the bar, so it cannot frost (the bar is its backdrop root).
+ * Thick tier as a near-opaque fill instead, with the material's hairline, highlight and lift;
+ * 0.9 keeps the blue current item at 4.5:1 even with white content scrolling behind it.
+ */
 .nav-menu {
-  --blur: 25px;
   position: absolute;
   top: calc(100% + 0.25rem);
   left: 50%;
   z-index: 1001;
   min-width: 12.5rem;
   padding: var(--s-2);
+  border: 1px solid var(--hairline);
   border-radius: var(--radius-md);
-  background: var(--night);
+  background: var(--night-thick);
+  box-shadow: var(--sheen), var(--shadow-lift);
   list-style: none;
+  text-shadow: var(--glass-text-shadow);
   opacity: 0;
   visibility: hidden;
   translate: -50% 6px;
@@ -458,7 +921,7 @@
   font-weight: 700;
   letter-spacing: 0.04em;
   text-decoration: none;
-  text-shadow: none;
+  text-shadow: var(--glass-text-shadow);
   transition:
     background-color 0.2s ease,
     color 0.2s ease;
@@ -473,6 +936,7 @@
   color: var(--white);
 }
 
+/* Flat inside the bar: a tint and a hairline, no blur of its own. */
 .menu-button {
   display: none;
   width: 2.75rem;
@@ -483,14 +947,26 @@
   background: var(--glass-ghost);
   color: var(--white);
   cursor: pointer;
+  transition:
+    border-color 0.3s ease,
+    background-color 0.3s ease;
 }
 
+@media (hover: hover) {
+  .menu-button:hover {
+    border-color: var(--hairline-hover);
+    background: var(--glass-white);
+  }
+}
+
+/* A sibling of the bar, not a child, so it frosts for real: Thick tier for a text-dense menu. */
 .mobile-menu {
   --blur: 25px;
   margin-top: var(--s-2);
   padding: var(--s-3);
   max-height: calc(100svh - 6.5rem);
   overflow-y: auto;
+  overscroll-behavior: contain;
   background: var(--night);
 }
 
@@ -503,7 +979,7 @@
   padding: 0;
 }
 
-.mobile-menu a:not(.btn) {
+.mobile-menu a:not(.mobile-cta) {
   display: flex;
   align-items: center;
   min-height: 3rem;
@@ -511,34 +987,30 @@
   border-radius: var(--radius-md);
   color: var(--white);
   text-decoration: none;
-  text-shadow: none;
+  text-shadow: var(--glass-text-shadow);
 }
 
-.mobile-menu a:not(.btn):hover,
+.mobile-menu a:not(.mobile-cta):hover,
 .mobile-menu a[aria-current="true"] {
   background: var(--blue-hover);
 }
 
-.mobile-menu .mobile-sub a:not(.btn) {
+.mobile-menu .mobile-sub a:not(.mobile-cta) {
   min-height: 2.75rem;
   padding-left: var(--s-7);
   color: var(--mist);
   font-size: 0.9375rem;
 }
 
-.mobile-menu .btn {
+/* Flat primary tint: the menu is already the glass layer. */
+.mobile-menu .mobile-cta {
   width: 100%;
   margin-top: var(--s-3);
 }
 
 @media (max-width: 959px) {
-  .nav,
   .header-actions .header-cta {
     display: none;
-  }
-
-  .menu-button {
-    display: inline-grid;
   }
 
   .header-bar {
@@ -546,16 +1018,40 @@
   }
 }
 
-@media (min-width: 960px) {
+/*
+ * Phones, and touch screens from 960px (a tablet in landscape): the menu button and its panel
+ * instead of the inline nav, whose Services menu opens on hover and focus only, so a tap could
+ * never reach the practice links (tapping "Services" follows the link).
+ */
+@media (max-width: 959px), (hover: none) {
+  .nav {
+    display: none;
+  }
+
+  .menu-button {
+    display: inline-grid;
+  }
+}
+
+@media (min-width: 960px) and (hover: hover) {
   .mobile-menu {
     display: none;
   }
 }
 
+/* From 960px the panel drops from the button: right-aligned under the bar, as wide as its rows. */
+@media (min-width: 960px) {
+  .mobile-menu {
+    max-width: 24rem;
+    margin-right: max(0px, (100% - var(--max)) / 2);
+    margin-left: auto;
+  }
+}
+
 /* ------------------------------------------------------------------ */
-/*  Footer: a glass bar. Fixed to the bottom on wide screens, as before;     */
-/*  a normal block at the end of the page on phones, where it would cover   */
-/*  too much of the screen.                                                  */
+/*  Footer: a Regular-tier glass bar. Fixed to the bottom on wide      */
+/*  screens, as before; a normal block at the end of the page on       */
+/*  phones, where it would cover too much of the screen.               */
 /* ------------------------------------------------------------------ */
 
 .site-footer {
@@ -570,7 +1066,8 @@
   justify-content: space-between;
   gap: var(--s-1) var(--s-6);
   max-width: var(--max);
-  min-height: 3.5rem;
+  /* Also the bottom scroll inset's height (globals.css): the bar never wraps from 960px. */
+  min-height: var(--footer-bar-h);
   margin-inline: auto;
   padding: var(--s-1) var(--s-5);
   background: var(--glass-bar);
@@ -597,6 +1094,14 @@
   font-size: 0.9375rem;
 }
 
+/* The links, then the pause control: the bar's right-hand group. */
+.footer-end {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-1) var(--s-6);
+}
+
 .footer-links {
   display: flex;
   gap: var(--s-5);
@@ -616,4 +1121,214 @@
 
 .footer-links a:hover {
   color: var(--blue);
+}
+
+/*
+ * A short viewport (a landscape phone, 400% zoom): fixed bars would cover too much of it (at
+ * 320x180 the header alone took 44%), so both scroll with the page and the menu panel grows with
+ * its rows instead of scrolling in a slot (WCAG 1.4.10). globals.css drops the scroll insets.
+ */
+@media (max-height: 30rem) {
+  .site-header {
+    position: absolute;
+  }
+
+  .mobile-menu {
+    max-height: none;
+    overflow-y: visible;
+  }
+
+  .site-footer {
+    position: static;
+    padding: var(--s-5) var(--s-3) var(--s-3);
+    pointer-events: auto;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/*  The pause control (components/motion-toggle.tsx): a flat button    */
+/*  in the footer bar and in the mobile menu, never glass of its own.  */
+/* ------------------------------------------------------------------ */
+
+.motion-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  min-height: 2.75rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--dim);
+  font: 400 0.9375rem/1.2 var(--font);
+  text-align: left;
+  text-shadow: var(--glass-text-shadow);
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.motion-toggle .icon {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+/* Both labels in one cell: the button is as wide as the longer, whichever is showing. */
+.motion-toggle-label {
+  display: grid;
+}
+
+.motion-toggle-label > span {
+  grid-area: 1 / 1;
+}
+
+.motion-toggle-label > [data-current="false"] {
+  visibility: hidden;
+}
+
+/* Beside the footer links, a quiet control that brightens (it is not a link, so not blue). */
+.motion-toggle-bar:hover {
+  color: var(--white);
+}
+
+/* In the menu panel: a row like the links above it, after the contact action. */
+.motion-toggle-menu {
+  display: flex;
+  width: 100%;
+  min-height: 3rem;
+  margin-top: var(--s-2);
+  padding: 0 var(--s-4);
+  border-radius: var(--radius-md);
+  color: var(--mist);
+}
+
+.motion-toggle-menu:hover {
+  background: var(--blue-hover);
+  color: var(--white);
+}
+
+/*
+ * Server-rendered in place and invisible until the runtime has read the capabilities, so the bar
+ * does not shift when it appears; [hidden] (no scene to pause) takes it out. Reduced motion (a
+ * still scene), forced colours (no scene) and a renderer that gave up hide it before any script.
+ * Last in this block, so the placements above never re-show it.
+ */
+.motion-toggle[data-available="pending"] {
+  visibility: hidden;
+}
+
+.motion-toggle[hidden],
+html[data-scene="off"] .motion-toggle {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce), (forced-colors: active) {
+  .motion-toggle {
+    display: none;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/*  Preferences: solid material. Last in the file so it wins over the  */
+/*  fills above; it swaps the material tokens, so the band tints in    */
+/*  sections.css follow too. (globals.css swaps the shared tokens.)    */
+/*  The WebGL glass never runs for these visitors.                     */
+/* ------------------------------------------------------------------ */
+
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  .glass,
+  .btn,
+  [data-glass] {
+    /* An image layer, like the frost gradient it replaces (the floor below it stays unseen). */
+    --glass-fill: linear-gradient(var(--surface-solid), var(--surface-solid));
+    --glass-amber: color-mix(in srgb, var(--surface-solid) 90%, rgb(255 174 0));
+    --glass-silver: color-mix(in srgb, var(--surface-solid) 90%, rgb(204 204 204));
+    --glass-pill-fill: color-mix(in srgb, var(--surface-solid) 82%, var(--blue));
+    /* Hover (--glass-lit) moves the night to its hover shade, the primary from 30% to 42% blue. */
+    --glass-btn-fill: color-mix(
+      in srgb,
+      var(--surface-solid-hover) calc(100% * var(--glass-lit)),
+      var(--surface-solid)
+    );
+    --glass-btn-primary-fill: color-mix(
+      in srgb,
+      var(--blue) calc(30% + 12% * var(--glass-lit)),
+      var(--surface-solid)
+    );
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  /* A solid pill hides its droplet: no bead (see the pills above). */
+  .glass-pill {
+    --pill-bead: 0px;
+    --pill-lead: 1.5rem;
+  }
+
+  .pill-bead {
+    display: none;
+  }
+
+  /* Solid shows nothing behind it: a service card's layer is its solid fill, whole and unblurred. */
+  .service-card::before {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    clip-path: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .glass,
+  .btn,
+  [data-glass],
+  .nav-menu {
+    background: Canvas;
+    border: 1px solid CanvasText;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .glass-band {
+    border-inline: 0;
+  }
+
+  /* The scene is hidden, so no droplet: no bead (see the pills above). */
+  .glass-pill {
+    --pill-bead: 0px;
+    --pill-lead: 1.5rem;
+  }
+
+  .pill-bead {
+    display: none;
+  }
+
+  /* The card is Canvas (above), so its frost layer goes. */
+  .service-card::before {
+    display: none;
+  }
+
+  /*
+   * The current section, practice and language: their blue text, drawn-in bar and tint are all
+   * forced to the system colours and vanish, so they are underlined instead (forced colours keep
+   * an underline, in the text colour).
+   */
+  .nav-link::after {
+    display: none;
+  }
+
+  .nav-link[aria-current="true"],
+  .nav-menu a[aria-current="true"],
+  .mobile-menu a[aria-current="true"],
+  .lang a[aria-current="true"] {
+    text-decoration-line: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.35em;
+  }
+}
+
+/* On a light system canvas the reversed lockup's white letters vanish: one dark tone instead. */
+@media (forced-colors: active) and (prefers-color-scheme: light) {
+  .header-logo img {
+    filter: brightness(0);
+  }
 }

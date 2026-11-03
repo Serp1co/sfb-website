@@ -18,6 +18,11 @@ export interface Dictionary {
   };
   common: {
     newTab: string;
+    /**
+     * The ambient-animation toggle (WCAG 2.2.2) in the footer bar and the mobile menu. Each label
+     * names the action a press takes, so the label changes with the state.
+     */
+    motion: { pause: string; play: string };
   };
   header: {
     homeAria: string;
@@ -30,11 +35,13 @@ export interface Dictionary {
     nav: { home: string; about: string; services: string; partners: string; contact: string };
   };
   hero: {
-    claimLead: string;
-    claimEmphasis: string;
-    lead: string;
-    primaryCta: string;
-    secondaryCta: string;
+    /**
+     * The h1 under the logo, one short phrase per practice, read as one line ("Infrastructure.
+     * Development. Security."). The hero holds nothing else (owner, 2026-11-02): the header keeps
+     * the contact action and the services section the ways into the practices. Each phrase keeps
+     * its own line on a phone, so the line never breaks inside a pair.
+     */
+    tagline: string[];
   };
   about: {
     title: string;
@@ -56,7 +63,6 @@ export interface Dictionary {
     lead: string;
     partnersLabel: string;
     customersLabel: string;
-    sharedNote: string;
   };
   contact: {
     title: string;

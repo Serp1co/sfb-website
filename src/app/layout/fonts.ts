@@ -1,13 +1,18 @@
-import { Sora } from "next/font/google";
+import { IBM_Plex_Sans } from "next/font/google";
 
 /**
- * Sora: wide, geometric, smooth-curved. It echoes the extended, speed-cut
- * lettering of the SFB mark and the liquid scene, and reads well at body size.
- * One variable family carries the whole hierarchy. next/font self-hosts it at
- * build time and generates a size-adjusted fallback, so text never jumps.
+ * IBM Plex Sans: an engineered, sober grotesque. Squared apertures and a tall
+ * x-height give it a technical precision that suits infrastructure and
+ * security, with none of the playfulness of a geometric or rounded face.
+ * One family carries the whole hierarchy; only the two weights in use are
+ * loaded. next/font self-hosts it at build time and generates a size-adjusted
+ * fallback, so text never jumps.
+ *
+ * To try another face, change this one export.
  */
-export const sora = Sora({
+export const fontSans = IBM_Plex_Sans({
   subsets: ["latin"],
-  variable: "--font-sora",
+  weight: ["400", "700"],
+  variable: "--font-sans",
   display: "swap",
 });
